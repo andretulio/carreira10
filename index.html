@@ -5294,6 +5294,7 @@ c10ScheduleConsequence=function(e,o,phase){if(!e.c10Space)return c10SpaceSchedul
 const c10SpaceTrackBase=c10TrackChoice;
 c10TrackChoice=function(e,o,phase){
  if(!e||!o)return;
+ if(e.c10Space){e.title??=e.t;e.desc??=e.d;e.t??=e.title;e.d??=e.desc;}
  c10EnsureEventDepth();const already=P.eventLedger.some(x=>x.key===c10EventPhaseKey(phase,e));
  c10SpaceTrackBase(e,o,phase);if(already||!e.c10Space)return;
  const data=e.c10Space;
