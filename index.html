@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Carreira 10 — v0.9.18 · Correções de Continuidade</title>
+<title>Carreira 10 — v0.9.19 · Disputa por Espaço</title>
 <style>
 :root{
   --bg:#090e0a;--p:#101812;--p2:#151f17;--p3:#0d140f;--ln:#29372c;--tx:#f2f5f2;--mu:#9fad9f;
@@ -443,7 +443,7 @@ body.c10FontLarge{--c10-body:15px;--c10-detail:14px;--c10-caption:12px;--c10-lea
 <div class="wrap">
   <div class="top">
     <div class="brand">CARREIRA <span>10</span></div>
-    <div class="tag">v0.9.18 · Correções de Continuidade</div>
+    <div class="tag">v0.9.19 · Disputa por Espaço</div>
   </div>
 
   <section id="setup" class="panel">
@@ -4580,7 +4580,7 @@ new MutationObserver(bSync).observe($('game'),{attributes:true,attributeFilter:[
 const bEngineRetire=retire;retire=function(){const result=bEngineRetire();if(!diagnosticMode091){bUi.pending={kind:"retired",stage:"Carreira encerrada",title:"Sua história deixou um legado",text:P.name+" · "+P.games+" jogos · "+P.goals+" gols · "+P.trophies+" títulos",scene:"stadium"};bRoute("flow")}return result};
 
 /* v0.9.3 — portability and recovery tools. The save schema remains version 73. */
-const C10_RELEASE='0.9.18';
+const C10_RELEASE='0.9.19';
 const C10_EXPORT_KIND='carreira10-save';
 
 function c10Download(name,text,type='application/json'){
@@ -5234,10 +5234,120 @@ function c10RestoreFlow(){
  }finally{c10RestoringFlow=false;}
 }
 
+/* v0.9.19 — Disputa por espaço: decisões, evidências e retornos próprios. */
+function c10SpaceStories(){return P.spaceStories??=[]}
+function c10SpaceActive(){return c10SpaceStories().find(a=>a.status==='active')}
+function c10SpaceOfferEvent(){
+ const s=P.activeSeason,f=s?.first,promise=s?.promise||P.contractPromise;
+ if(!s||!f||!promise?.minutes||!P.club||c10SpaceActive())return null;
+ if(c10SpaceStories().some(a=>P.year-a.year<2))return null;
+ const days=physicalState().seasons[P.year]?.days||0,target=Math.round(promise.minutes/2);
+ if(days>=45||target<300||(f.minutes>=target*.90&&f.minutes>=700))return null;
+ const coach=getClubPeople(P,P.club).coach;
+ return normalizeNarrativeEvent({id:'c10_space_start',family:'carreira',c10Space:{stage:'start',club:P.club.name,coachId:coach.id,coachName:coach.name,year:P.year,firstMinutes:f.minutes,target,promisedMinutes:promise.minutes},t:'Seu espaço precisa de um plano',d:`No ${P.club.name}, você recebeu ${f.minutes} dos ${target} minutos projetados até aqui. ${coach.name} ainda não garantiu uma mudança. Escolha o que negociar; projeção não é garantia de escalação.`,opts:[
+ {label:'Cobrar uma chance na reta final',spaceIntent:'challenge',effects:{minutesBonus:180,coach:-4},text:'Você pede uma oportunidade imediata e tensiona a relação. O bônus entra no cálculo de minutos; concorrência e disponibilidade continuam valendo.'},
+ {label:'Combinar um plano de desenvolvimento',spaceIntent:'develop',effects:{form:4,coach:3,minutesBonus:-100},text:'Você aceita menor utilização imediata para trabalhar com a comissão. A próxima conversa vai conferir se o espaço cresceu, sem tratar esforço como garantia.'},
+ {label:'Orientar o agente a buscar mais minutos',spaceIntent:'market',effects:{agent:3,clubRel:-3},text:'Seu agente recebe uma prioridade para o próximo mercado: procurar uma alternativa com projeção de utilização superior à do clube atual. A existência de uma proposta depende do mercado.'}
+ ]});
+}
+function c10SpaceFacts(a){
+ const season=P.history?.find(s=>s.year===a.year);
+ if(!season)return null;
+ const second=season.secondHalf?.minutes||0,days=season.physical?.days||0;
+ const moved=season.midseasonTransfer||season.startClub!==season.club||P.club?.name!==a.club;
+ const coach=P.club?getClubPeople(P,P.club).coach:null;
+ const outcome=moved?'moved':coach?.id!==a.coachId?'coach_changed':days>=45?'interrupted':second>=a.target*.85?'space_gained':'space_limited';
+ return {outcome,second,days,year:season.year,minutes:season.minutes};
+}
+function c10SpaceReturn(){
+ const a=c10SpaceActive();if(!a||P.year<=a.year)return null;
+ const facts=c10SpaceFacts(a);if(!facts)return null;
+ const context={moved:'A mudança de clube encerrou a negociação interna. O resultado não será atribuído ao antigo treinador.',coach_changed:'O comando mudou. O novo treinador não participou do acordo anterior.',interrupted:`A temporada teve ${facts.days} dias de indisponibilidade. Esses dados não permitem tratar a utilização como uma simples recusa do treinador.`,space_gained:`Na segunda metade, você recebeu ${facts.second} minutos, diante da referência de ${a.target}. Houve espaço maior ou próximo da projeção.`,space_limited:`Na segunda metade, você recebeu ${facts.second} minutos, diante da referência de ${a.target}. O espaço continuou abaixo do plano.`}[facts.outcome];
+ const intent={challenge:'cobrar uma chance imediata',develop:'trabalhar em um plano de desenvolvimento',market:'pedir ao agente uma alternativa com mais minutos'}[a.intent];
+ let opts;
+ if(['moved','coach_changed','interrupted'].includes(facts.outcome))opts=[
+ {label:'Reconstruir o plano no contexto atual',spaceResolution:'reset',effects:{coach:2,morale:1,marketBoost:-1},text:'Você encerra a cobrança anterior e começa uma negociação adequada ao presente.'},
+ {label:'Manter a busca por mais espaço',spaceResolution:'search',effects:{agent:2,clubRel:-2},text:'A prioridade esportiva permanece. Seu agente buscará uma alternativa no próximo mercado, sem garantia de proposta.'}
+ ];
+ else if(a.intent==='market')opts=[
+ {label:'Comparar a alternativa trabalhada pelo agente',spaceResolution:'search',effects:{agent:2,clubRel:-2},text:'A busca continua no próximo mercado. Compare minutos, nível e salário; mais utilização não garante melhor carreira.'},
+ {label:'Retirar a prioridade de saída',spaceResolution:'stay',effects:{clubRel:3,marketBoost:-2},text:'Você encerra a busca dirigida por minutos e volta a considerar as propostas normais.'}
+ ];
+ else if(facts.outcome==='space_gained')opts=[
+ {label:'Consolidar a relação com a comissão',spaceResolution:'stay',effects:{coach:3,clubRel:2,marketBoost:-2},text:'Você reconhece a utilização recebida e reduz a pressão por uma saída.'},
+ {label:'Usar a recuperação para explorar o mercado',spaceResolution:'search',effects:{agent:2,clubRel:-3},text:'O crescimento de espaço não encerra sua ambição. O agente passa a buscar uma alternativa com mais minutos neste ciclo.'}
+ ];
+ else opts=[
+ {label:'Dar mais um ciclo ao trabalho com a comissão',spaceResolution:'stay',effects:{coach:3,marketBoost:-3},text:'Você aceita continuar tentando no clube. Não há bônus automático de minutos nem nova promessa inventada.'},
+ {label:'Transformar a frustração em busca de clube',spaceResolution:'search',effects:{agent:3,clubRel:-3},text:'O agente recebe uma busca dirigida por utilização. Se não houver alternativa adequada, o jogo não fabricará uma proposta.'}
+ ];
+ return normalizeNarrativeEvent({id:`c10_space_return_${a.id}`,family:'carreira',follow:true,c10Space:{stage:'return',arcId:a.id,facts},t:'O que aconteceu com a disputa por espaço',d:`Em ${a.year}, com ${a.coachName} no ${a.club}, você escolheu ${intent}. ${context}`,opts});
+}
+const c10SpaceMidBase=midseasonEvent;
+midseasonEvent=function(){const e=c10SpaceOfferEvent();return e?c10RecordPresented(e,'mid'):c10SpaceMidBase()};
+const c10SpacePulseBase=c10PulseCandidates;
+c10PulseCandidates=function(){return c10SpacePulseBase().filter(e=>!c10SpaceActive()||e.id!=='c10_pulse_minutes')};
+const c10SpaceOpeningBase=makeEvent;
+makeEvent=function(){const e=c10SpaceReturn();return e?c10RecordPresented(e,'opening'):c10SpaceOpeningBase()};
+const c10SpaceScheduleBase=c10ScheduleConsequence;
+c10ScheduleConsequence=function(e,o,phase){if(!e.c10Space)return c10SpaceScheduleBase(e,o,phase)};
+const c10SpaceTrackBase=c10TrackChoice;
+c10TrackChoice=function(e,o,phase){
+ if(!e||!o)return;
+ c10EnsureEventDepth();const already=P.eventLedger.some(x=>x.key===c10EventPhaseKey(phase,e));
+ c10SpaceTrackBase(e,o,phase);if(already||!e.c10Space)return;
+ const data=e.c10Space;
+ if(data.stage==='start'){
+  const a={...data,id:`space_${data.year}_${P.eventLedger.length}`,status:'active',intent:o.spaceIntent,choice:o.label,marketUntil:o.spaceIntent==='market'?data.year+1:null};
+  c10SpaceStories().push(a);
+  addDetailedMemory(a.id,'Um plano para conquistar espaço',`${a.coachName} · ${a.club}: ${o.label}. Referência: ${a.target} minutos por metade.`,a.club);
+ }else{
+  const a=c10SpaceStories().find(x=>x.id===data.arcId);if(!a||a.status!=='active')return;
+  Object.assign(a,{status:'resolved',facts:data.facts,resolution:o.spaceResolution,resolvedYear:P.year,marketUntil:o.spaceResolution==='search'?P.year+1:null});
+  addDetailedMemory(`${a.id}_end`,'O desfecho da disputa por espaço',`${e.d} Decisão: ${o.label}.`,a.club);
+ }
+};
+const c10SpaceMarketBase=buildMarketOffers;
+buildMarketOffers=function(player,initial=false,refresh=false){
+ const offers=c10SpaceMarketBase(player,initial,refresh);
+ if(initial||player!==P||!player.club)return offers;
+ const a=c10SpaceStories().slice().reverse().find(x=>x.marketUntil===player.year);
+ if(!a)return offers;
+ a.marketSearch??={};const key=String(player.year);
+ if(!(key in a.marketSearch)){
+  let candidate=null;const avoid=[player.club.name];const current=expectedMinutes(player,player.club);
+  for(let i=0;i<8;i++){
+   const club=chooseByType(player,'protagonist',avoid);if(!club)break;avoid.push(club.name);
+   const o=makeOffer(player,club,'protagonist');
+   if(o.minutes>=current+180&&(!candidate||o.minutes>candidate.minutes))candidate=o;
+  }
+  a.marketSearch[key]=candidate;
+ }
+ const proposal=a.marketSearch[key];
+ if(proposal&&activeClubs().some(c=>c.name===proposal.club.name)&&proposal.club.name!==player.club.name&&proposal.minutes>=expectedMinutes(player,player.club)+180){
+  const o={...proposal,c10SpaceTarget:true,why:`Busca dirigida por espaço: ${proposal.minutes} minutos projetados. Compare também o nível, o salário e a duração do contrato.`};
+  const index=offers.findIndex(x=>x.club.name===o.club.name);
+  if(index>=0)offers[index]=o;else if(offers.length<5)offers.unshift(o);else{const replace=offers.findIndex(x=>x.type!=='stay');offers[replace<0?0:replace]=o;}
+  player.lastOfferBatch=offers.map(x=>x.club.name);
+ }
+ return offers;
+};
+const c10SpaceCardBase=bOfferCard;
+bOfferCard=function(o,i,mid){return c10SpaceCardBase(o,i,mid).replace('<dl class="bOfferFields">',`${o.c10SpaceTarget?'<p class="c10SpaceNote">Busca do agente · prioridade: minutos. Projeção não é garantia.</p>':''}<dl class="bOfferFields">`)};
+const c10SpaceLedgerBase=macro094['event-ledger'];
+macro094['event-ledger']=function(){
+ const html=c10SpaceLedgerBase.call(this),arcs=c10SpaceStories().slice().reverse();
+ if(!arcs.length)return html;
+ const cards=arcs.map(a=>`<article class="c10EventLedgerItem"><div><small>${a.year} · ${bEsc(a.club)} · ${a.status==='active'?'EM ANDAMENTO':'ENCERRADO'}</small><h3>Disputa por espaço</h3><p>${bEsc(a.coachName)} · ${bEsc(a.choice)}</p><p>${a.facts?bEsc(`Segunda metade: ${a.facts.second} minutos; referência: ${a.target}. ${a.facts.days} dias de indisponibilidade.`):bEsc(`Referência: ${a.target} minutos por metade. O resultado será conferido na próxima abertura de temporada.`)}</p>${a.marketUntil===P.year?'<p>Busca dirigida por minutos ativa no próximo mercado.</p>':''}</div></article>`).join('');
+ return html.replace('<div class="c10EventFamilyBars">',`<section aria-label="Histórias com continuidade"><h2>Histórias em curso e desfechos</h2>${cards}</section><div class="c10EventFamilyBars">`);
+};
+
+
+
 
 })();
 //# sourceURL=carreira10-engine.js
 </script>
-<div class="c10BuildStamp" hidden>Carreira 10 v0.9.18 · Correções de Continuidade · base 2023.1 · equilíbrio global 2 · save schema 73</div>
+<div class="c10BuildStamp" hidden>Carreira 10 v0.9.19 · Disputa por Espaço · base 2023.1 · equilíbrio global 2 · save schema 73</div>
 </body>
 </html>
