@@ -5483,7 +5483,7 @@ function c10ReunionEvent(){
  if(!P.club)return null;
  const coach=getClubPeople(P,P.club).coach;
  const squad=clubSquad(P,P.club);
- const a=c10CareerThreads().slice().reverse().find(x=>x.type==='club'&&x.moved&&x.from!==P.club.name&&!x.reunionYear&&P.year>x.year&&(x.coachId===coach.id||squad.some(p=>p.id===x.rivalId)));
+ const a=c10CareerThreads().slice().reverse().find(x=>x.type==='club'&&x.moved&&!x.reunionYear&&P.year>x.year&&(x.coachId===coach.id||squad.some(p=>p.id===x.rivalId)));
  if(!a)return null;
  const isCoach=a.coachId===coach.id,person=isCoach?coach:squad.find(p=>p.id===a.rivalId);
  const e=c10ThreadEvent(a,'reunion',`O reencontro com ${person.name}`,`Você dividiu o ambiente do ${a.from} com ${person.name}. A escolha “${a.choice||'mudar de clube'}” ficou registrada naquela trajetória. Agora a mesma pessoa está ${isCoach?'na comissão':'no elenco'} do ${P.club.name}; a história anterior não garante sua escalação.`,isCoach?[
@@ -5603,6 +5603,7 @@ macro094['event-ledger']=function(){
  const cards=threads.map(a=>`<article class="c10EventLedgerItem"><div><small>${a.year} · ${bEsc(a.club)} · ${a.status==='resolved'?'ENCERRADO':'EM ANDAMENTO'}</small><h3>${bEsc(a.title)}</h3><p>${bEsc(a.choice||'A intenção será definida na próxima abertura disponível.')}</p>${a.facts?`<p>${a.facts.minutes??0} minutos registrados. ${bEsc(a.ending||'')}</p>`:'<p>O retorno usará os dados da temporada e a presença dos personagens.</p>'}</div></article>`).join('');
  return html.replace('<div class="c10EventFamilyBars">',`<section aria-label="Vínculos e recuperação"><h2>Vínculos, recuperação e experiência</h2>${cards}</section><div class="c10EventFamilyBars">`);
 };
+
 
 
 
