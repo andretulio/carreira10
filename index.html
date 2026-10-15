@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Carreira 10 — v0.9.17 · Mercado Inicial Ampliado</title>
+<title>Carreira 10 — v0.9.18 · Correções de Continuidade</title>
 <style>
 :root{
   --bg:#090e0a;--p:#101812;--p2:#151f17;--p3:#0d140f;--ln:#29372c;--tx:#f2f5f2;--mu:#9fad9f;
@@ -443,7 +443,7 @@ body.c10FontLarge{--c10-body:15px;--c10-detail:14px;--c10-caption:12px;--c10-lea
 <div class="wrap">
   <div class="top">
     <div class="brand">CARREIRA <span>10</span></div>
-    <div class="tag">v0.9.17 · Mercado Inicial Ampliado</div>
+    <div class="tag">v0.9.18 · Correções de Continuidade</div>
   </div>
 
   <section id="setup" class="panel">
@@ -1037,9 +1037,9 @@ function squadTabHtml(){
  const roster=rosterClubData(P.club.name);
  const compIds=new Set(directCompetitors(P,P.club,3).map(x=>x.id));
  const pos=playerPrimaryPosition(P),transactions=(P.squadTransactions||[]).filter(x=>x.club===P.club.name).slice(-10).reverse();
- const you={name:P.name,pos,age:P.age,ovr:P.ovr,potential:P.potential,form:P.form,role:roleFor(P,P.club),games:P.lastSeason?.club===P.club.name?P.lastSeason.games:0,minutes:P.lastSeason?.club===P.club.name?P.lastSeason.minutes:0,id:"__you"};
+ const you={name:P.name,pos,age:P.age,ovr:P.ovr,potential:P.potential,form:P.form,role:roleFor(P,P.club).name,games:P.lastSeason?.club===P.club.name?P.lastSeason.games:0,minutes:P.lastSeason?.club===P.club.name?P.lastSeason.minutes:0,id:"__you"};
  const rows=[you,...squad].sort((a,b)=>SQUAD_POSITIONS.indexOf(a.pos)-SQUAD_POSITIONS.indexOf(b.pos)||b.ovr-a.ovr);
- return `<div class="squadHead"><div><div class="section">Elenco atual</div><h2>${visualClub(P.club,32)}</h2><div class="small">${rows.length} jogadores contando você · posição principal: ${pos}</div>${roster?`<div class="rosterNote">Elenco inicial misto da base v2: ${roster.players.filter(x=>x.type==="real").length} jogadores reais de referência + ${roster.players.filter(x=>x.type!=="real").length} fictícios.</div>`:""}</div><div class="competitionSummary"><b>Concorrência direta:</b> ${directCompetitors(P,P.club,3).map(r=>`${r.name} (${r.ovr})`).join(" · ")||"baixa"}</div></div>
+ return `<div class="squadHead"><div><div class="section">Elenco atual</div><h2>${visualClub(P.club.name,32)}</h2><div class="small">${rows.length} jogadores contando você · posição principal: ${pos}</div>${roster?`<div class="rosterNote">Elenco inicial misto da base v2: ${roster.players.filter(x=>x.type==="real").length} jogadores reais de referência + ${roster.players.filter(x=>x.type!=="real").length} fictícios.</div>`:""}</div><div class="competitionSummary"><b>Concorrência direta:</b> ${directCompetitors(P,P.club,3).map(r=>`${r.name} (${r.ovr})`).join(" · ")||"baixa"}</div></div>
  <div class="squadLegend"><span class="squadBadge you">Você</span><span class="squadBadge rival">Concorrente direto</span><span class="originBadge real">Real</span><span class="originBadge fictional">Fictício</span></div>
  <div class="careerTableWrap"><table class="careerTable squadTable"><thead><tr><th>Jogador</th><th>Pos.</th><th>Idade</th><th>OVR</th><th>Pot.</th><th>Forma</th><th>Papel</th><th>J</th><th>Min.</th></tr></thead><tbody>
  ${rows.map(x=>`<tr class="${x.id==="__you"?"youRow":compIds.has(x.id)?"rivalRow":""}"><td><span class="squadPlayerName">${x.name}</span>${x.id==="__you"?'<span class="squadSub">seu jogador</span>':`<span class="originBadge ${(x.playerType||"fictional")==="real"?"real":"fictional"}">${(x.playerType||"fictional")==="real"?"Real":"Fictício"}</span>`}${x.id!=="__you"&&x.ageMode==="modelada_para_jogo"?'<span class="squadSub">idade modelada para o jogo</span>':""}</td><td><span class="squadPos">${x.pos}</span></td><td>${x.age}</td><td><b>${x.ovr}</b></td><td>${x.potential}</td><td>${x.form}</td><td>${x.role}</td><td>${x.games||0}</td><td>${(x.minutes||0).toLocaleString("pt-BR")}</td></tr>`).join("")}
@@ -1148,7 +1148,8 @@ function personCurrentContext(player,person){
  return player.knownPeople?.[person.id]?.club||"Contexto desconhecido";
 }
 function relationshipBadge(score){return `<span class="relationLabel ${relationClass(score)}">${relationshipLabel(score)} · ${Math.round(score??50)}/100</span>`}
-function syncKnownPerson(player,person,club,role=person.role){
+function syncKnownPerson(player,person,club,role=person?.role){
+ club=typeof club==="object"?club?.name||"Contexto desconhecido":club;
  if(!person)return;
  player.knownPeople??={};
  const id=person.id||personId(role,person.name,club);
@@ -1158,6 +1159,7 @@ function syncKnownPerson(player,person,club,role=person.role){
  return k;
 }
 function recordPersonEvent(player,person,club,text,role=person?.role){
+ club=typeof club==="object"?club?.name||"Contexto desconhecido":club;
  if(!person)return;
  const known=syncKnownPerson(player,person,club,role);
  known.notes.push({year:player.year,age:player.age,text});
@@ -1381,9 +1383,9 @@ async function restoreWorldCheckpoint(){
  try{
   let save=null;try{save=await readLargeCheckpoint()}catch(e){}
   if(!save)save=JSON.parse(localStorage.getItem(WORLD_SAVE_KEY)||localStorage.getItem(PREVIOUS_WORLD_SAVE_KEY)||localStorage.getItem(LEGACY_WORLD_SAVE_KEY)||'null');
-  if(![7,71,72,73].includes(save?.version)||!save.player?.world||!save.player?.lastSeason||!Array.isArray(save.clubs))throw Error('Nenhuma temporada compatível (v0.7 a v0.9.1) salva neste navegador.');
+  if(![7,71,72,73].includes(save?.version)||!save.player?.world||(!save.player?.lastSeason&&!save.player?.savedFlow)||!Array.isArray(save.clubs))throw Error('Nenhuma temporada compatível (v0.7 a v0.9.1) salva neste navegador.');
   clubs=save.clubs;P=save.player;P.worldSquads=unpackWorldSquads(P.worldSquads);P.club=clubByName(P.club.name);P.world.version=73;P.clubRelationships??={};ensureNationalCareer(P);bindClubRelationshipCompatibility(P);marketState(P);Object.values(P.knownPeople||{}).forEach(k=>{k.firstClub??=k.club;k.contexts??=[{club:k.club,from:k.firstYear,to:k.lastYear,role:k.role}]});
-  migrate091(P);offers=[];currentEvent=null;$("setup").classList.add('hidden');$("game").classList.remove('hidden');renderPlayer();showSeasonSummary(P.lastSeason);
+  migrate091(P);offers=[];currentEvent=null;$("setup").classList.add('hidden');$("game").classList.remove('hidden');c10RepairSavedPeople(P);renderPlayer();if(!c10RestoreFlow())showSeasonSummary(P.lastSeason);
  }catch(e){alert(e.message||'Não foi possível recuperar a carreira.');}
 }
 
@@ -2536,7 +2538,7 @@ function memoryById(id){return P.memories.find(m=>m.id===id)}
 function seenEvent(id){return P.storyLog.some(s=>s.eventId===id)}
 function addMemory(memory){
  if(!memory||hasMemory(memory.id))return;
- P.memories.push({id:memory.id,title:memory.title,age:P.age,club:P.club?P.club.name:"Sem clube"});
+ P.memories.push({id:memory.id,title:memory.title,year:P.year,age:P.age,club:P.club?P.club.name:"Sem clube"});
 }
 function applyEffects(effects={}){
  const bounded=new Set(["rep","coach","morale","clubRel","pressureTolerance","agent","squad","media","form","physical"]);
@@ -2578,6 +2580,7 @@ function setNarrativeFlag(id,value=true){
 }
 function hasNarrativeFlag(id){return !!P.narrativeFlags?.[id]}
 function ensureTradeoff(opt){
+ if(opt._c10TradeoffReady)return opt;
  opt.effects={...(opt.effects||{})};
  const vals=Object.values(opt.effects).filter(v=>typeof v==="number");
  const hasPos=vals.some(v=>v>0),hasNeg=vals.some(v=>v<0);
@@ -2591,13 +2594,14 @@ function ensureTradeoff(opt){
    else if(opt.effects.form>0)opt.effects.physical=(opt.effects.physical||0)-1;
    else opt.effects.morale=(opt.effects.morale||0)-1;
  }
- return opt;
+ opt._c10TradeoffReady=true;return opt;
 }
 function normalizeNarrativeEvent(e){
+ if(e._c10Normalized)return e;
  e=applyTraitEventContext(e);
  e.family=eventFamilyOf(e);
  e.opts=(e.opts||[]).map(ensureTradeoff);
- return e;
+ e._c10Normalized=true;return e;
 }
 function consequenceSummary(e,o){
  const entries=Object.entries(o.effects||{}).filter(([k,v])=>typeof v==="number"&&v!==0);
@@ -2765,11 +2769,11 @@ function registerArcFromChoice(event,opt){
 
  if((id==="context_bench_plan"||id.includes("coach_conflict"))&&(label.includes("Pedir minutos")||label.includes("Cobrar")||label.includes("confront"))){
    const arc=startStoryArc("coach_conflict",{title:"Tensão com o treinador",person:people?.coach?.name||"Treinador",summary:`Você pressionou ${people?.coach?.name||"o treinador"} por mais espaço.`});
-   arc.data.choice=label;addDetailedMemory(`arc_${arc.id}`,"Cobrou espaço do treinador",arc.summary);
+   arc.data.choice=label;arc.data.personId=people?.coach?.id;addDetailedMemory(`arc_${arc.id}`,"Cobrou espaço do treinador",arc.summary);
  }
- if(id==="context_rival_form"||id.includes("late_rival")){
+ if(id==="context_rival_form"||id.includes("late_rival")||id==="c10_pulse_rivalry"){
    const arc=startStoryArc("internal_rivalry",{title:"Rivalidade interna",person:rival?.name||"Concorrente",summary:`A disputa com ${rival?.name||"um concorrente"} ganhou peso no elenco.`});
-   arc.data.lastChoice=label;addDetailedMemory(`arc_${arc.id}`,"Uma rivalidade interna ganhou força",arc.summary);
+   arc.data.lastChoice=label;arc.data.personId=rival?.id;if(id==="c10_pulse_rivalry"&&label==="Propor treinos em parceria")resolveStoryArc(arc,"A disputa foi transformada em parceria de treino.","rival_peace");addDetailedMemory(`arc_${arc.id}`,"Uma rivalidade interna ganhou força",arc.summary);
  }
  if(id==="context_home_call"){
    const arc=startStoryArc("home_return",{title:"O chamado do clube formador",club:P.formedClub||P.club?.name,summary:`O ${P.formedClub||"clube formador"} voltou a aparecer na sua história.`});
@@ -3457,13 +3461,13 @@ function nationalRoleForSeason(season){return season?.nationalCycle?.role||ensur
 function showNationalTeamMoment(season){
  const cycle=season.nationalCycle||{},n=ensureNationalCareer();P.nationalRole=cycle.role||n.status;const tour=cycle.tournament,injury=season.physical?.days||0;
  let title,desc,opts;
- if(!cycle.called){title="Você fica fora da convocação";desc=`${cycle.reason||"A concorrência"} interrompe seu ciclo com ${P.nation}. O espaço pode ser recuperado com forma, minutos e regularidade.`;opts=[{label:"Responder dentro de campo",effects:{form:3,morale:-1,selectionBoost:.06},text:"Você transforma a frustração em meta esportiva."},{label:"Recuperar o corpo antes de tudo",effects:{physical:4,selectionBoost:.02,rep:-1},text:"A recuperação protege a carreira, embora o retorno leve tempo."},{label:"Cobrar publicamente a comissão",effects:{media:4,rep:1,selectionBoost:-.07,morale:2},text:"A declaração cria pressão, mas afasta a comissão."}];
+ if(!cycle.called){title="Você fica fora da convocação";desc=n.callups>0?`${cycle.reason||"A concorrência"} deixa você fora deste ciclo de ${P.nation}. O espaço pode ser recuperado com forma, minutos e regularidade.`:`Você ainda busca a primeira convocação por ${P.nation}. ${cycle.reason||"A concorrência"} pesa na avaliação; forma, minutos e regularidade podem aproximar essa oportunidade.`;opts=[{label:"Responder dentro de campo",effects:{form:3,morale:-1,selectionBoost:.06},text:"Você transforma a frustração em meta esportiva."},{label:"Recuperar o corpo antes de tudo",effects:{physical:4,selectionBoost:.02,rep:-1},text:"A recuperação protege a carreira, embora o retorno leve tempo."},{label:"Cobrar publicamente a comissão",effects:{media:4,rep:1,selectionBoost:-.07,morale:2},text:"A declaração cria pressão, mas afasta a comissão."}];
  }else if(tour){title=`${tour.name}: ${tour.result}`;desc=`Seu mini-arco passou por ${tour.stages.join(" → ")}. Você termina como ${P.nationalRole.toLowerCase()}, com ${tour.games} jogo(s) e ${tour.goals} gol(s).${n.captain?" Você também carrega a responsabilidade da braçadeira.":""}`;opts=injury>=35?[{label:"Jogar no limite pelo país",effects:{rep:4,selectionBoost:.08,physical:-7,form:2},text:"O protagonismo cresce, junto com o risco físico."},{label:"Preservar o corpo",effects:{physical:6,selectionBoost:-.05,morale:-1},text:"Você reduz o risco, mas cede espaço imediato."},{label:"Antecipar o retorno ao clube",effects:{physical:-3,form:-2,selectionBoost:.03,clubRel:2},text:"O clube reconhece o esforço; a recuperação fica mais delicada.",clubContext:true}]:[{label:"Assumir protagonismo no próximo ciclo",effects:{selectionBoost:.08,rep:3,pressureTolerance:2,physical:-2},text:"O status cresce e a cobrança acompanha."},{label:"Valorizar o coletivo",effects:{squad:3,rep:1,morale:2,selectionBoost:-.01},text:"A liderança silenciosa fortalece o grupo."},{label:"Pedir gestão de carga ao clube",effects:{physical:4,selectionBoost:-.03,clubRel:-2},text:"Você protege o corpo, com tensão explícita sobre minutos no clube.",clubContext:true}];
  }else{title=`Ciclo de ${cycle.context||"seleção"}`;desc=`Você somou ${cycle.caps} jogo(s), ${cycle.goals} gol(s) e ocupa o papel de ${P.nationalRole.toLowerCase()}. O próximo passo depende também de forma e utilização no clube.`;opts=[{label:"Buscar a titularidade",effects:{selectionBoost:.06,rep:2,pressureTolerance:2,physical:-2},text:"A ambição aumenta seu espaço e sua carga."},{label:"Consolidar-se sem acelerar",effects:{selectionBoost:.03,morale:3,squad:2},text:"Você sustenta o ciclo com menor desgaste."},{label:"Priorizar minutos no clube",effects:{physical:3,form:2,selectionBoost:-.04,clubRel:2},text:"O clube aprova a escolha contextual; a seleção perde prioridade.",clubContext:true}];}
  const e=normalizeNarrativeEvent({id:`selection_${season.year}`,family:"seleção",t:title,d:desc,opts});
  bCapturedNational=e;
  $("mainScreen").innerHTML=`<div class="nationalCard"><span class="nationalRole">${P.nationalRole}</span>${n.captain?'<span class="captainBadge"> · Capitão</span>':''}<div class="eventFamily">seleção</div><div class="section" style="margin-top:8px">Seleção · ${P.nation}</div><h2>${title}</h2><p>${desc}</p>${tour?`<div class="nationalPath">${tour.stages.map((s,i)=>`<span class="nationalStep ${i===tour.stages.length-1?'current':'done'}">${s}</span>`).join("")}</div>`:""}<div class="opts">${e.opts.map((o,i)=>`<button class="btn" data-nt="${i}">${o.label}<span class="choiceHint">${o.text}</span></button>`).join("")}</div></div>`;
- document.querySelectorAll("[data-nt]").forEach(b=>b.addEventListener("click",()=>{const o=e.opts[Number(b.dataset.nt)];applyEffects(o.effects||{});if(o.clubContext&&o.effects?.clubRel)adjustClubRelationship(P.club.name,{boardTrust:o.effects.clubRel},`Conflito explícito de carga entre ${P.club.name} e a seleção.`);P.storyLog.push({age:season.age,club:P.nation,eventId:e.id,title,choice:o.label,text:o.text,follow:false});n.moments.push({year:season.year,title, text:o.label+" — "+o.text});rememberNarrativeFamily("seleção");renderPlayer();renderChoiceResult({event:e,opt:o,buttonLabel:"Ver resumo da temporada",onContinue:()=>showSeasonSummary(season)});}));
+ document.querySelectorAll("[data-nt]").forEach(b=>b.addEventListener("click",()=>{c10ResolveNationalChoice(season,e,Number(b.dataset.nt));}));
 }
 function resolveMidseason(i){
  const e=normalizeNarrativeEvent(P.activeSeason.midEvent),o=e.opts[i];
@@ -3694,6 +3698,7 @@ function continueWithoutMarket(){
 }
 function applyAutoOption(opt){
  if(!opt)return;
+ if(opt.agentChange)setAgentProfile(P,opt.agentChange,"Decisão sobre representação");if(opt.memory)addMemory(opt.memory);if(opt.flag)setNarrativeFlag(opt.flag,true);
  if(opt.effects)applyEffects(opt.effects);
  if(opt.personEffect)adjustPersonRelationship(P,opt.personEffect.target,opt.personEffect.delta,opt.personEffect.note);
  if(opt.mult&&P.activeSeason)P.activeSeason.secondHalfMultiplier*=opt.mult;
@@ -3848,7 +3853,7 @@ function retire(){
  $("finalHallBtn").addEventListener("click",()=>showHall());
 }
 function newPlayer(name,nation,arch){
- let p={name,nation,arch,age:16,year:2026,ovr:rnd(68,72),potential:0,rep:50,coach:60,morale:72,form:72,physical:rnd(78,88),longevity:rnd(86,114)/100,injuryLoad:0,clubRel:55,pressureTolerance:rnd(62,78),agent:50,squad:55,media:45,club:null,games:0,goals:0,assists:0,caps:0,ntGoals:0,trophies:0,market:1.2,maxMarket:1.2,season:0,history:[],visited:[],transfers:[],recentOffers:[],lastSeason:null,salary:0,seasonsAtClub:0,memories:[],storyLog:[],lastEventId:null,eventCooldown:0,justTransferred:false,minutesBonus:0,growthBoost:0,selectionBoost:0,marketBoost:0,trophyDetails:[],awards:[],milestones:[],clubStats:{},finalSeasonPending:false,finalSeasonActive:false,savedToHall:false,contract:null,contractHistory:[],contractRequests:[],contractExitNote:null,contractPromise:null,activeSeason:null,midOffers:[],worldTables:{},lastOfferBatch:[],offerRefreshCount:0,lastMidOfferBatch:[],worldPeople:{},knownPeople:{},peopleHistory:[],agentPerson:null,worldSquads:{},squadTransactions:[],formedClub:null,nationalRole:"Fora da lista",rivalHistory:[],seasonEventCount:0,narrativeFamilies:[],narrativeFlags:{},eventHistory:[],storyArcs:[],clubRelationships:{},traits:{scores:{},evidence:[],changes:[],lastSeason:null},objectives:{current:null,history:[],pressureEvents:[],fulfilled:0,broken:0},nationalCareer:{status:"Fora da lista",callups:0,cycles:[],moments:[],captain:false,captainYear:null,lastCalledYear:null,missedYears:0,statusPeak:"Fora da lista"}};
+ let p={name,nation,arch,age:16,year:2023,ovr:rnd(68,72),potential:0,rep:50,coach:60,morale:72,form:72,physical:rnd(78,88),longevity:rnd(86,114)/100,injuryLoad:0,clubRel:55,pressureTolerance:rnd(62,78),agent:50,squad:55,media:45,club:null,games:0,goals:0,assists:0,caps:0,ntGoals:0,trophies:0,market:1.2,maxMarket:1.2,season:0,history:[],visited:[],transfers:[],recentOffers:[],lastSeason:null,salary:0,seasonsAtClub:0,memories:[],storyLog:[],lastEventId:null,eventCooldown:0,justTransferred:false,minutesBonus:0,growthBoost:0,selectionBoost:0,marketBoost:0,trophyDetails:[],awards:[],milestones:[],clubStats:{},finalSeasonPending:false,finalSeasonActive:false,savedToHall:false,contract:null,contractHistory:[],contractRequests:[],contractExitNote:null,contractPromise:null,activeSeason:null,midOffers:[],worldTables:{},lastOfferBatch:[],offerRefreshCount:0,lastMidOfferBatch:[],worldPeople:{},knownPeople:{},peopleHistory:[],agentPerson:null,worldSquads:{},squadTransactions:[],formedClub:null,nationalRole:"Fora da lista",rivalHistory:[],seasonEventCount:0,narrativeFamilies:[],narrativeFlags:{},eventHistory:[],storyArcs:[],clubRelationships:{},traits:{scores:{},evidence:[],changes:[],lastSeason:null},objectives:{current:null,history:[],pressureEvents:[],fulfilled:0,broken:0},nationalCareer:{status:"Fora da lista",callups:0,cycles:[],moments:[],captain:false,captainYear:null,lastCalledYear:null,missedYears:0,statusPeak:"Fora da lista"}};
  p.potential=clamp(rnd(88,94)+archetypes[arch].pot,88,99);
  bindClubRelationshipCompatibility(p);
  p.agentPerson=makeAgent(p,"local");
@@ -4204,10 +4209,11 @@ function labCareer091(strategy){
   if(shouldForceRetirement())break;
   makeSeasonGoals();P.season++;P.seasonEventCount=0;
   const e=normalizeNarrativeEvent(makeEvent()),opt=e.opts.find(o=>!o.action&&(o.effects?.physical||0)>=0)||e.opts[0];
-  applyAutoOption(opt);registerArcFromChoice(e,opt);handleArcAction(e,opt);applyPersistentRelationsFromChoice(e,opt);P.storyLog.push({age:P.age,club:P.club.name,eventId:e.id,title:e.t,choice:opt.label,text:opt.text||''});decisions++;
+  c10AutoDecision(e,opt,'opening');decisions++;
   P.healthAuto=true;simulateSeason();
-  const mid=midseasonEvent(),mo=mid.opts.find(o=>!o.action&&(o.effects?.physical||0)>=0)||mid.opts.find(o=>!o.action);if(mo){applyAutoOption(mo);decisions++;}
-  {const late=makeLateSeasonEvent();applyAutoOption(late.opts[1]||late.opts[0]);decisions++;}
+  const mid=midseasonEvent(),mo=mid.opts.find(o=>!o.action&&(o.effects?.physical||0)>=0)||mid.opts.find(o=>!o.action);if(mo){c10AutoDecision(mid,mo,'mid');decisions++;}
+  if(Math.random()<.82){const pulse=c10MakeSeasonPulse(),po=pulse.opts.find(o=>!o.action&&(o.effects?.physical||0)>=0)||pulse.opts[0];c10AutoDecision(pulse,po,'pulse');decisions++;}
+  {const late=makeLateSeasonEvent();c10AutoDecision(late,late.opts[1]||late.opts[0],'late');decisions++;}
   finishSeason();P.healthAuto=false;
   if(shouldForceRetirement()||Math.random()<retirementChance091())break;
   const market=buildMarketOffers(P),stay=market.find(o=>o.type==='stay'),external=market.filter(o=>o.type!=='stay');let choice=stay;
@@ -4519,7 +4525,7 @@ function bHeaderCta(p,market){
 function bSync(){const active=!!P&&!$('game').classList.contains('hidden');document.body.classList.toggle('bGame',active);bSide.classList.toggle('hidden',!active);bHeader.classList.toggle('hidden',!active);if(!active)return;
  const p=bUi.pending,market=p?.kind==='market';const nav=[['home','Início'],...(market?[['market','Mercado']]:[]),...Object.entries(bAreas).map(([id,a])=>[id,a.label])];
  bSide.querySelector('nav').innerHTML=nav.map(([id,l])=>'<button type="button" data-b-route="'+id+'" class="'+((bUi.route===id||(bUi.route==='flow'&&id===(market?'market':'home')))?'active':'')+'" '+((bUi.route===id||(bUi.route==='flow'&&id===(market?'market':'home')))?'aria-current="page"':'')+'>'+bIcon(id)+'<span>'+l+'</span></button>').join('');
- bHeader.innerHTML='<div class="bSeason"><strong>Temporada '+bEsc((p?.seasonLabel||seasonLabel(P.year,P.club)))+'</strong><small>'+bEsc(p?.stage||'Sua trajetória')+'</small></div><div class="bClub">'+(P.club?visualAsset('crest',P.club.name,40):'')+'<div><strong>'+bEsc(P.club?.name||'Primeiro contrato')+'</strong><small>'+bEsc(P.club?.league||P.nation)+'</small></div></div><div class="bStage"><small>'+P.age+' anos · '+bEsc(bRole())+'</small><strong>'+bEsc(P.name)+'</strong></div>'+bHeaderCta(p,market);
+ bHeader.innerHTML='<div class="bSeason"><strong>Temporada '+bEsc((p?.seasonLabel||seasonLabel(P.year,P.club||{country:P.nation})))+'</strong><small>'+bEsc(p?.stage||'Sua trajetória')+'</small></div><div class="bClub">'+(P.club?visualAsset('crest',P.club.name,40):'')+'<div><strong>'+bEsc(P.club?.name||'Primeiro contrato')+'</strong><small>'+bEsc(P.club?.league||P.nation)+'</small></div></div><div class="bStage"><small>'+P.age+' anos · '+bEsc(bRole())+'</small><strong>'+bEsc(P.name)+'</strong></div>'+bHeaderCta(p,market);
 }
 function bRoute(route,tab){if(!P)return;if(route==='market')route='flow';bUi.route=route;bHome.classList.toggle('hidden',route!=='home');$('mainScreen').classList.toggle('hidden',route!=='flow');$('statusLine').classList.add('hidden');$('careerCenter').classList.toggle('hidden',!bAreas[route]);if(route==='home')bRenderHome();if(bAreas[route]){const a=bAreas[route];tab=tab||bUi.tabs[route]||a.tabs[0][0];if(!a.tabs.some(t=>t[0]===tab))tab=a.tabs[0][0];bUi.tabs[route]=tab;$('careerCenterTitle').textContent=a.label;$('careerCenterSub').textContent=P.name+' · '+(P.club?.name||'Sem clube');$('careerCenter').querySelector('.careerTabs').innerHTML=a.tabs.map(([id,l])=>'<button class="careerTab '+(id===tab?'active':'')+'" data-b-tab="'+id+'">'+l+'</button>').join('');renderCareerTab(tab)}bSync();window.scrollTo({top:0,behavior:'instant'});}
 function bOpenTab(tab,area){const exact=area&&bAreas[area]?.tabs.some(t=>t[0]===tab)?area:Object.keys(bAreas).find(a=>bAreas[a].tabs.some(t=>t[0]===tab));bRoute(exact||'career',tab)}
@@ -4552,7 +4558,7 @@ const bEngineNational=showNationalTeamMoment;showNationalTeamMoment=function(sea
 const bEngineRecovery=preparePhysicalHalf;preparePhysicalHalf=function(...args){const interrupted=bEngineRecovery(...args);if(interrupted&&!args[2]&&!diagnosticMode091){const buttons=[...$('mainScreen').querySelectorAll('[data-recovery]')];bRenderEvent(bCapturedRecovery,'Condição física',i=>buttons[i].click())}return interrupted};
 renderChoiceResult=function({event,opt,buttonLabel='Continuar',onContinue}){const sum=consequenceSummary(event,opt);bMount({kind:'consequence',stage:'Consequência da decisão',title:opt.label,text:opt.text||'Sua decisão deixou uma marca.',scene:bEventScene(event)},'<div class="bLayout"><div>'+bHero({label:'Consequência da escolha',title:opt.label,text:opt.text||'Sua decisão deixou uma marca.',scene:bEventScene(event),compact:true})+'<div class="bGrid"><section class="bPanel"><h2>Ganhos imediatos</h2><p class="positive">'+sum.positives.map(bEsc).join('<br>')+(sum.positives.length?'':'Nenhum ganho numérico imediato.')+'</p></section><section class="bPanel"><h2>Custos e riscos</h2><p class="negative">'+sum.negatives.map(bEsc).join('<br>')+(sum.negatives.length?'':'Nenhum custo numérico imediato.')+'</p></section></div>'+bMetrics([['OVR',P.ovr],['Forma',Math.round(P.form)],['Moral',Math.round(P.morale)],['Físico',Math.round(P.physical)]])+'<div class="bNext"><button class="btn primary" id="narrativeContinueBtn">'+bEsc(buttonLabel)+' →</button>'+(opt.memory?'<p>Esta escolha ficará registrada na memória da carreira.</p>':'')+'</div></div>'+bContext()+'</div>',()=>bOnce($('narrativeContinueBtn'),onContinue))};
 function bOfferCard(o,i,mid){const former=P.club&&o.club.name!==P.club.name&&P.visited?.includes(o.club.name),badge=o.rivalContext?'Rival de '+o.rivalContext.rivalOf:o.returnContext?'Clube formador':former?'Ex-clube':o.type==='loan'?'Empréstimo':'Proposta';const people=getClubPeople(P,o.club);return '<article class="bOffer '+(bUi.selected===i?'selected':'')+'"><div class="bOfferTop"><span class="bOfferBadge '+(o.rivalContext?'risk':'')+'">'+bEsc(badge)+'</span><div class="bClubTitle">'+visualAsset('crest',o.club.name,58)+'<div><h3>'+bEsc(o.club.name)+'</h3><small>'+bEsc(o.club.country)+' · '+bEsc(o.club.league)+'</small></div>'+visualKits(o.club.name,30)+'</div><div class="bClubRating"><span>OVR <b>'+clubOvr(o.club)+'</b></span><span class="bStars">'+starText(clubOvr(o.club))+'</span></div></div><dl class="bOfferFields">'+[['Papel no elenco',o.role],['Salário semanal','€ '+o.salary+' mil'],['Contrato',o.years+' ano(s)'],['Jogos projetados','~'+o.games],['Minutos projetados',o.minutes.toLocaleString('pt-BR')]].map(([l,v])=>'<div><dt>'+bEsc(l)+'</dt><dd>'+bEsc(v)+'</dd></div>').join('')+'</dl><details class="bOfferDetails"><summary>Ver detalhes do projeto</summary><p><b>Técnico:</b> '+bEsc(people.coach.name)+' · '+bEsc(people.coach.style)+'</p><p><b>Temporadas recentes:</b> '+bEsc(recentPositionLine(o.club))+'</p><p><b>Risco esportivo:</b> '+bEsc(offerRisk(o))+'</p><p>'+bEsc(o.why||'')+'</p>'+((o.promises||[]).length?'<p><b>Promessas:</b> '+o.promises.map(p=>bEsc(p.label+' '+p.target)).join(' · ')+'</p>':'')+(o.type==='loan'?'<p>Retorno ao clube de origem ao fim da temporada.</p>':'')+'</details><button type="button" class="btn '+(bUi.selected===i?'primary':'ghost')+'" data-b-select="'+i+'" aria-pressed="'+(bUi.selected===i)+'">'+(bUi.selected===i?'Proposta selecionada ✓':'Selecionar proposta')+'</button></article>'}
-function bMarket(batch,{initial=false,mid=false,preferLoan=false}={}){const selected=batch[bUi.selected],external=batch.map((o,i)=>({o,i})).filter(x=>x.o.type!=='stay'),stay=batch.find(o=>o.type==='stay'),current=P.club;const tableFields=[['Salário semanal',o=>'€ '+o.salary+' mil',current?'€ '+(P.salary||0)+' mil':'—'],['Duração do vínculo',o=>o.years+' anos',P.contract?P.contract.endYear-P.year+' ano(s) restantes':'—'],['Papel esportivo',o=>o.role,bRole()],['Jogos projetados',o=>'~'+o.games,current?'~'+projectedGames(P,current):'—'],['Minutos projetados',o=>o.minutes.toLocaleString('pt-BR'),current?expectedMinutes(P,current).toLocaleString('pt-BR'):'—'],['OVR do clube',o=>clubOvr(o.club),current?clubOvr(current):'—']];
+function bMarket(batch,{initial=false,mid=false,preferLoan=false}={}){const selected=batch[bUi.selected],external=batch.map((o,i)=>({o,i})).filter(x=>x.o.type!=='stay'),stay=batch.find(o=>o.type==='stay'),current=P.club;const tableFields=[['Salário semanal',o=>'€ '+o.salary+' mil',current?'€ '+(P.salary||0)+' mil':'—'],['Duração do vínculo',o=>o.years+' anos',P.contract?Math.max(0,P.contract.endYear-P.year+1)+' ano(s) restantes':'—'],['Papel esportivo',o=>o.role,bRole()],['Jogos projetados',o=>'~'+o.games,current?'~'+projectedGames(P,current):'—'],['Minutos projetados',o=>o.minutes.toLocaleString('pt-BR'),current?expectedMinutes(P,current).toLocaleString('pt-BR'):'—'],['OVR do clube',o=>clubOvr(o.club),current?clubOvr(current):'—']];
  const currentCard=current?'<article class="bOffer current"><span class="bOfferBadge">Seu clube atual</span><div class="bClubTitle">'+visualAsset('crest',current.name,58)+'<div><h3>'+bEsc(current.name)+'</h3><small>'+bEsc(current.country)+' · '+bEsc(current.league)+'</small></div>'+visualKits(current.name,30)+'</div><div class="bClubRating"><span>OVR <b>'+clubOvr(current)+'</b></span><span class="bStars">'+starText(clubOvr(current))+'</span></div><dl class="bOfferFields">'+tableFields.slice(0,5).map(([l,fn,v])=>'<div><dt>'+bEsc(l)+'</dt><dd>'+bEsc(v)+'</dd></div>').join('')+'</dl><p class="bMuted">Referência para comparar os próximos projetos.</p>'+bButton('Ver contrato','tab:career:contracts')+'</article>':'';
  const recommendation=selected?'Compare o papel de '+selected.role.toLowerCase()+' e os '+selected.minutes.toLocaleString('pt-BR')+' minutos projetados com a cobrança e o vínculo oferecidos.':P.age<23?'Espaço em campo e desenvolvimento merecem prioridade nesta fase.':P.physical<55?'Seu físico pede atenção à carga e ao papel prometido.':'Compare espaço, estabilidade e ambição do projeto antes de aceitar.';
  bMount({kind:'market',stage:mid?'Janela de meio de temporada':'Mercado de transferências',title:initial?'Onde sua história começa?':mid?'Mudar agora ou terminar o ano?':'Qual será seu próximo capítulo?',text:'Compare os projetos. Seu agente orienta; você decide.',scene:'stadium'},bHero({label:mid?'Meio de temporada':'Mercado de transferências',title:initial?'Escolha onde começar':'Mercado de transferências',text:preferLoan?'Projetos de empréstimo, com retorno ao clube de origem no encerramento.':'Novos desafios. Analise as propostas e escolha seu próximo projeto.',compact:true})+'<div class="bMarketToolbar"><p>Projeções anuais de jogos e minutos; não são garantias de utilização.</p><button class="btn ghost" id="bRefreshOffers">↻ Atualizar propostas</button></div><div class="bOffers" style="--offers-count:'+(external.length+(current?1:0))+'">'+currentCard+external.map(({o,i})=>bOfferCard(o,i,mid)).join('')+'</div><div class="bMarketBottom"><section class="bPanel"><h2>Comparativo dos projetos</h2><div class="bComparison"><table><thead><tr><th>Critério</th>'+(current?'<th>Atual<br>'+bEsc(current.name)+'</th>':'')+external.map(({o})=>'<th>'+bEsc(o.club.name)+'</th>').join('')+'</tr></thead><tbody>'+tableFields.map(([l,fn,v])=>'<tr><th>'+bEsc(l)+'</th>'+(current?'<td>'+bEsc(v)+'</td>':'')+external.map(({o})=>'<td>'+bEsc(fn(o))+'</td>').join('')+'</tr>').join('')+'</tbody></table></div></section><section class="bPanel"><h2>Conselho do seu agente</h2><p class="bAgent">'+bEsc(P.agentPerson?.name||'Seu agente')+'</p><p>'+bEsc(recommendation)+'</p>'+(selected?'<p><b>'+bEsc(selected.club.name)+'</b> · risco esportivo '+bEsc(offerRisk(selected))+'</p>':'<p class="bMuted">Selecione uma proposta para analisar o contexto.</p>')+'</section></div><div class="bMarketActions"><button type="button" class="btn primary" id="bAcceptSelected" '+(!selected?'disabled':'')+'>'+(selected?(selected.type==='loan'?'Aceitar empréstimo':'Aceitar proposta'):'Selecione uma proposta')+' →</button>'+(stay?'<button class="btn ghost" id="bStay">'+(mid?'Ficar e terminar a temporada':'Aceitar renovação')+'</button>':'')+(!initial&&!mid&&retirementPressure(P)>=30?'<button class="btn ghost" id="bMarketFuture">Pensar no futuro</button>':'')+'</div>'+(stay&&!mid?'<p class="bMuted">Renovação: '+bEsc(stay.years)+' anos · '+bEsc(stay.role)+' · € '+bEsc(stay.salary)+' mil/semana. Ganha estabilidade e reduz a flexibilidade futura.</p>':'')+(P.contractExitNote?'<section class="bPanel"><p>'+bEsc(P.contractExitNote)+'</p></section>':''),()=>{const opts={initial,mid,preferLoan};$('mainScreen').querySelectorAll('[data-b-select]').forEach(b=>b.addEventListener('click',()=>{bUi.selected=Number(b.dataset.bSelect);bMarket(batch,opts)}));bOnce($('bAcceptSelected'),()=>{if(bUi.selected==null)return;const first=!P.club;mid?acceptMidseasonOffer(bUi.selected):acceptOffer(bUi.selected);if(first)bRoute('home')});bOnce($('bRefreshOffers'),()=>{bUi.selected=null;mid?showMidseasonMarket(preferLoan,true):showOffers(initial,true)});if($('bStay'))bOnce($('bStay'),()=>mid?acceptMidseasonOffer(batch.indexOf(stay)):acceptOffer(batch.indexOf(stay)));if($('bMarketFuture'))bOnce($('bMarketFuture'),showCareerDecision);});
@@ -4565,7 +4571,7 @@ showSeasonSummary=function(s){if(diagnosticMode091)return;const won=(s.competiti
 function bCompactTable(table,club){return '<div class="bComparison"><table><thead><tr><th>#</th><th>Clube</th><th>J</th><th>SG</th><th>PTS</th></tr></thead><tbody>'+table.map(r=>'<tr class="'+(r.club===club?'me':'')+'"><td>'+r.position+'</td><td>'+visualClub(r.club)+'</td><td>'+r.played+'</td><td>'+r.gd+'</td><td><b>'+r.points+'</b></td></tr>').join('')+'</tbody></table></div>'}
 const bEngineTab=renderCareerTab;renderCareerTab=function(tab){const body=$('careerCenterBody');if(tab==='attributes'){body.innerHTML=bHero({label:'Perfil',title:P.name,text:archetypes[P.arch].label+' · '+P.nation+' · '+P.age+' anos',compact:true})+bMetrics([['OVR',P.ovr],['Forma',Math.round(P.form)],['Moral',Math.round(P.morale)],['Físico',Math.round(P.physical)]])+'<section class="bPanel"><h2>Atributos</h2><div class="attrgrid">'+$('playerAttrs').innerHTML+'</div>'+traitBadgesHtml()+'</section>';return}if(tab==='competition'){body.innerHTML='<section class="bPanel"><h2>Disputa por posição</h2>'+$('squadHud').innerHTML+'</section>';return}if(tab==='table'){body.innerHTML='<section class="bPanel"><h2>Última classificação concluída</h2>'+(P.lastSeason?.leagueTable?renderLeagueTableHtml(P.lastSeason.leagueTable,P.club?.name):'<p class="bEmpty">Disponível após a primeira temporada concluída.</p>')+'</section>';return}if(tab==='timeline'){const items=[...P.history.map(x=>({...x,title:x.label})),...P.storyLog];items.sort((a,b)=>(b.age||0)-(a.age||0)||(b.year||0)-(a.year||0));body.innerHTML=bHero({label:'História',title:'Cada escolha constrói uma história',text:'Seus resultados, decisões e vínculos ao longo da carreira.',compact:true})+'<section class="bPanel">'+bTimeline(items)+'</section>';return}if(tab==='moves'){body.innerHTML='<section class="bPanel"><h2>Clubes registrados no caminho</h2><p class="bMuted">Os saves existentes registram a sequência de destinos, sem datas e origens completas.</p>'+bTimeline(P.transfers.slice().reverse().map(t=>typeof t==='string'?{title:t}:{...t,title:t.to||t.club||'Transferência'}))+'</section>';return}if(tab==='rivals'){body.innerHTML=legacyTabHtml()+bTimeline(P.rivalHistory.slice().reverse().map(x=>({...x,title:x.from+' → '+x.to})));return}bEngineTab(tab)};
 const bEnginePlayer=renderPlayer;renderPlayer=function(){bEnginePlayer();if(!diagnosticMode091){bSync();if(bUi.route==='home')bRenderHome()}};
-const bRestore=restoreWorldCheckpoint;restoreWorldCheckpoint=async function(){await bRestore();if(P&&!$('game').classList.contains('hidden'))bRoute('home')};resume.onclick=restoreWorldCheckpoint;
+const bRestore=restoreWorldCheckpoint;restoreWorldCheckpoint=async function(){await bRestore();if(P&&!$('game').classList.contains('hidden')&&!P.savedFlow)bRoute('home')};resume.onclick=restoreWorldCheckpoint;
 // Legacy auxiliary screens keep their handlers, but carry an explicit pending stage.
 for(const [get,set,stage] of [[()=>showContractTalk,fn=>showContractTalk=fn,'Conversa com agente'],[()=>showCareerDecision,fn=>showCareerDecision=fn,'Futuro da carreira'],[()=>showFarewell,fn=>showFarewell=fn,'Despedida'],[()=>showMidseasonMarket,fn=>showMidseasonMarket=fn,'Mercado']]){if(stage==='Mercado')continue;const original=get();set(function(...args){const result=original.apply(this,args);if(!diagnosticMode091){bUi.pending={kind:'aux',stage,title:stage,text:'Um novo capítulo da sua trajetória.',scene:'stadium'};bRoute('flow')}return result})}
 // Visibility is the only observed property; no post-render decoration of screens.
@@ -4574,7 +4580,7 @@ new MutationObserver(bSync).observe($('game'),{attributes:true,attributeFilter:[
 const bEngineRetire=retire;retire=function(){const result=bEngineRetire();if(!diagnosticMode091){bUi.pending={kind:"retired",stage:"Carreira encerrada",title:"Sua história deixou um legado",text:P.name+" · "+P.games+" jogos · "+P.goals+" gols · "+P.trophies+" títulos",scene:"stadium"};bRoute("flow")}return result};
 
 /* v0.9.3 — portability and recovery tools. The save schema remains version 73. */
-const C10_RELEASE='0.9.17';
+const C10_RELEASE='0.9.18';
 const C10_EXPORT_KIND='carreira10-save';
 
 function c10Download(name,text,type='application/json'){
@@ -4608,8 +4614,8 @@ async function c10LoadPortableSave(save){
  Object.values(P.knownPeople||{}).forEach(k=>{k.firstClub??=k.club;k.contexts??=[{club:k.club,from:k.firstYear,to:k.lastYear,role:k.role}]});
  migrate091(P);offers=[];currentEvent=null;
  $('setup').classList.add('hidden');$('lab').classList.add('hidden');$('hall').classList.add('hidden');$('game').classList.remove('hidden');
- renderPlayer();if(P.lastSeason)showSeasonSummary(P.lastSeason);else showOffers(!P.club);
- saveWorldCheckpoint();bRoute('home');
+ c10RepairSavedPeople(P);renderPlayer();if(!c10RestoreFlow()){if(P.lastSeason)showSeasonSummary(P.lastSeason);else showOffers(!P.club);bRoute('home');}
+ saveWorldCheckpoint();
 }
 
 function c10ImportCareer(file){
@@ -4685,8 +4691,8 @@ const c10Home094=bRenderHome;bRenderHome=function(){if(!P||P.history.length>0||!
 /* v0.9.6 — leitura viva do ciclo de temporada. Nenhuma regra esportiva é alterada. */
 function c10Pct(value,target){return target?clamp(Math.round(value/target*100),0,160):0}
 function c10SeasonPhases(active=1){const labels=['Preparação','Primeiro turno','Janela e decisão','Reta final','Balanço'];return `<div class="c10SeasonPhases">${labels.map((label,i)=>`<div class="${i+1<active?'done':i+1===active?'active':''}"><span>${i+1<active?'✓':String(i+1).padStart(2,'0')}</span><b>${label}</b></div>`).join('')}</div>`}
-function c10Gauge(label,value,target,suffix=''){const pct=c10Pct(value,target);return `<div class="c10LiveGauge"><div><b>${bEsc(label)}</b><span>${Number(value||0).toLocaleString('pt-BR')}${suffix} / ${Number(target||0).toLocaleString('pt-BR')}${suffix}</span></div><div class="goalBar"><i style="width:${Math.min(100,pct)}%"></i></div><small>${pct}% da meta anual</small></div>`}
-function c10SeasonPulse(){const s=P.activeSeason,first=s?.first,promise=s?.promise||P.contractPromise,goals=ensureCurrentGoals(),health=physicalState(P),seasonHealth=health.seasons?.[P.year]||{},annualMinutes=first?first.minutes*2:0,annualGames=first?first.games*2:0,actual=first?roleFromUsage(P,annualMinutes,annualGames,P.club):bRole(),fulfillment=first?c10Pct(first.minutes,(promise?.minutes||1)/2):0;return `<section class="c10SeasonLive"><div class="c10LiveHead"><div><small>TEMPORADA EM ANDAMENTO</small><h2>${bEsc(seasonLabel(P.year,P.club))} · ${bEsc(P.club.name)}</h2><p>${first?'Leitura da primeira metade e projeção para a reta final.':'Expectativas definidas antes da estreia.'}</p></div><div class="c10LiveRole"><small>PAPEL ATUAL</small><b>${bEsc(actual)}</b><span>${fulfillment?fulfillment+'% da minutagem esperada até aqui':'Aguardando jogos'}</span></div></div>${c10SeasonPhases(first?3:1)}<div class="c10LiveGrid">${c10Gauge('Minutos',first?.minutes||0,(promise?.minutes||0)/2)}${c10Gauge('Jogos',first?.games||0,(promise?.games||0)/2)}<div class="c10LiveGauge"><div><b>Produção ofensiva</b><span>${first?(first.goals+first.assists):0} participações</span></div><div class="c10LiveNumbers"><strong>${first?.goals||0}<small>GOLS</small></strong><strong>${first?.assists||0}<small>ASSIST.</small></strong></div></div><div class="c10LiveGauge"><div><b>Condição física</b><span>${health.active?'Em recuperação':'Disponível'}</span></div><div class="c10LiveNumbers"><strong>${Math.round(P.physical)}<small>FÍSICO</small></strong><strong>${Math.round(seasonHealth.days||0)}<small>DIAS FORA</small></strong></div></div></div>${goals?`<div class="c10LiveGoals"><div><small>PLANO DA TEMPORADA</small><b>${bEsc(goals.context.label)} · pressão ${goals.context.pressure}/100</b></div><span>${goals.goals.length} metas prioritárias</span><span>${goals.promises.length} promessas do clube</span></div>`:''}</section>`}
+function c10Gauge(label,value,target,suffix=''){const pct=c10Pct(value,target);return `<div class="c10LiveGauge"><div><b>${bEsc(label)}</b><span>${Number(value||0).toLocaleString('pt-BR')}${suffix} / ${Number(target||0).toLocaleString('pt-BR')}${suffix}</span></div><div class="goalBar"><i style="width:${Math.min(100,pct)}%"></i></div><small>${pct}% da projeção até aqui</small></div>`}
+function c10SeasonPulse(){const s=P.activeSeason,first=s?.first,promise=s?.promise||P.contractPromise,goals=ensureCurrentGoals(),health=physicalState(P),seasonHealth=health.seasons?.[P.year]||{},annualMinutes=first?first.minutes*2:0,annualGames=first?first.games*2:0,actual=first?roleFromUsage(P,annualMinutes,annualGames,P.club):bRole(),fulfillment=first?c10Pct(first.minutes,(promise?.minutes||1)/2):0;return `<section class="c10SeasonLive"><div class="c10LiveHead"><div><small>TEMPORADA EM ANDAMENTO</small><h2>${bEsc(seasonLabel(P.year,P.club))} · ${bEsc(P.club.name)}</h2><p>${first?'Leitura da primeira metade e projeção para a reta final.':'Expectativas definidas antes da estreia.'}</p></div><div class="c10LiveRole"><small>PAPEL ATUAL</small><b>${bEsc(actual)}</b><span>${fulfillment?fulfillment+'% da minutagem esperada até aqui':'Aguardando jogos'}</span></div></div>${c10SeasonPhases(first?3:1)}<div class="c10LiveGrid">${c10Gauge('Minutos',first?.minutes||0,(promise?.minutes||0)/2)}${c10Gauge('Jogos',first?.games||0,Math.round((promise?.games||0)/2))}<div class="c10LiveGauge"><div><b>Produção ofensiva</b><span>${first?(first.goals+first.assists):0} participações</span></div><div class="c10LiveNumbers"><strong>${first?.goals||0}<small>GOLS</small></strong><strong>${first?.assists||0}<small>ASSIST.</small></strong></div></div><div class="c10LiveGauge"><div><b>Condição física</b><span>${health.active?'Em recuperação':'Disponível'}</span></div><div class="c10LiveNumbers"><strong>${Math.round(P.physical)}<small>FÍSICO</small></strong><strong>${Math.round(seasonHealth.days||0)}<small>DIAS FORA</small></strong></div></div></div>${goals?`<div class="c10LiveGoals"><div><small>PLANO DA TEMPORADA</small><b>${bEsc(goals.context.label)} · pressão ${goals.context.pressure}/100</b></div><span>${goals.goals.length} metas prioritárias</span><span>${goals.promises.length} promessas do clube</span></div>`:''}</section>`}
 
 const c10Event095=bRenderEvent;bRenderEvent=function(e,kind,onChoose,extra=''){const live=P?.activeSeason?.first?c10SeasonPulse():'';return c10Event095(e,kind,onChoose,live+extra)};
 
@@ -4717,7 +4723,7 @@ function c10NextInternational(){const now=P.year,next=[0,1,2,3,4].map(i=>({year:
 function c10TournamentPath(t){const stages=t?.stages||[];return `<div class="c10TournamentPath">${['Convocação','Fase de grupos','Mata-mata','Semifinal','Final'].map((s,i)=>{const reached=stages.includes(s),last=reached&&s===stages.at(-1);return `<div class="${reached?'done':''} ${last?'current':''}"><span>${reached?'✓':i+1}</span><b>${s}</b></div>`}).join('')}</div>`}
 function c10InternationalSummary(){const n=ensureNationalCareer(),called=n.cycles.filter(c=>c.called),tours=called.filter(c=>c.tournament),titles=tours.filter(c=>c.tournament.champion),next=c10NextInternational(),last=n.cycles.at(-1);return `<section class="c10InternationalHero"><div class="c10NationMark"><span>${c10NationCode(P.nation)}</span><small>SELEÇÃO NACIONAL</small></div><div><small>CARREIRA INTERNACIONAL</small><h2>${bEsc(P.nation)}</h2><p>${last?`Último ciclo: ${bEsc(last.context)} · ${bEsc(last.role)}`:'Aguardando a primeira convocação.'}</p></div><div class="c10InternationalNext"><small>PRÓXIMO GRANDE MARCO</small><b>${bEsc(next.name)}</b><span>${next.year}${next.year===P.year?' · nesta temporada':''}</span></div></section>${c10RoleLadder(n.status)}<div class="c10InternationalKpis"><div><b>${P.caps}</b><span>Jogos</span></div><div><b>${P.ntGoals}</b><span>Gols</span></div><div><b>${n.callups}</b><span>Ciclos convocado</span></div><div><b>${tours.length}</b><span>Torneios</span></div><div><b>${titles.length}</b><span>Títulos</span></div><div><b>${n.captain?'Sim':'—'}</b><span>Capitão</span></div></div>`}
 function c10CyclesTimeline(){const cycles=ensureNationalCareer().cycles.slice().reverse();return cycles.map(c=>`<article class="c10Cycle ${c.called?'called':'missed'}"><div class="c10CycleYear"><b>${c.year}</b><span>${c.age} anos</span></div><div class="c10CycleMain"><div><small>${bEsc(c.context)}</small><h3>${c.called?bEsc(c.role):'Fora da lista'}${c.captain?' <span class="captainBadge">C</span>':''}</h3></div><div class="c10CycleNumbers"><span><b>${c.caps||0}</b> jogos</span><span><b>${c.goals||0}</b> gols</span></div>${c.tournament?`<div class="c10CycleTournament"><b>${bEsc(c.tournament.name)} · ${bEsc(c.tournament.result)}</b>${c10TournamentPath(c.tournament)}</div>`:`<p>${bEsc(c.called?'Ciclo de preparação e partidas internacionais.':c.reason||'Não convocado.')}</p>`}</div></article>`).join('')||'<p class="bEmpty">A carreira internacional ainda não começou.</p>'}
-function c10InternationalFactors(){const last=P.lastSeason,n=ensureNationalCareer(),factors=[{label:'Nível esportivo',value:P.ovr,text:`OVR ${P.ovr}`},{label:'Forma atual',value:P.form,text:`Forma ${Math.round(P.form)}`},{label:'Utilização no clube',value:last?clamp(last.minutes/Math.max(last.promisedMinutes||2200,800)*75,0,100):0,text:last?`${last.minutes.toLocaleString('pt-BR')} minutos`:'Sem temporada concluída'},{label:'Reputação',value:P.rep,text:`Reputação ${Math.round(P.rep)}`},{label:'Disponibilidade',value:physicalState(P).active?25:Math.max(35,100-(last?.physical?.days||0)/2),text:physicalState(P).active?'Lesão ativa':`${Math.round(last?.physical?.days||0)} dias fora no último ano`}];return `<div class="c10FactorList">${factors.map(f=>`<div><p><b>${bEsc(f.label)}</b><span>${bEsc(f.text)}</span></p><div class="goalBar"><i style="width:${clamp(Math.round(f.value),0,100)}%"></i></div></div>`).join('')}</div><p class="bMuted">Convocação depende da combinação desses fatores, da idade e da concorrência. Nenhum indicador isolado garante presença na lista.</p>${n.status==='Fora da lista'&&n.cycles.length?`<div class="c10ReturnNote"><b>Caminho de retorno</b><span>Regularidade, minutos, boa forma e recuperação física podem reabrir espaço.</span></div>`:''}`}
+function c10InternationalFactors(){const last=P.lastSeason,n=ensureNationalCareer(),factors=[{label:'Nível esportivo',value:P.ovr,text:`OVR ${P.ovr}`},{label:'Forma atual',value:P.form,text:`Forma ${Math.round(P.form)}`},{label:'Utilização no clube',value:last?clamp(last.minutes/Math.max(last.promisedMinutes||2200,800)*75,0,100):0,text:last?`${last.minutes.toLocaleString('pt-BR')} minutos`:'Sem temporada concluída'},{label:'Reputação',value:P.rep,text:`Reputação ${Math.round(P.rep)}`},{label:'Disponibilidade',value:physicalState(P).active?25:Math.max(35,100-(last?.physical?.days||0)/2),text:physicalState(P).active?'Lesão ativa':`${Math.round(last?.physical?.days||0)} dias fora no último ano`}];return `<div class="c10FactorList">${factors.map(f=>`<div><p><b>${bEsc(f.label)}</b><span>${bEsc(f.text)}</span></p><div class="goalBar"><i style="width:${clamp(Math.round(f.value),0,100)}%"></i></div></div>`).join('')}</div><p class="bMuted">Convocação depende da combinação desses fatores, da idade e da concorrência. Nenhum indicador isolado garante presença na lista.</p>${n.status==='Fora da lista'&&n.cycles.length?`<div class="c10ReturnNote"><b>${n.callups>0?'Caminho de retorno':'Em busca da primeira convocação'}</b><span>${n.callups>0?'Regularidade, minutos, boa forma e recuperação física podem reabrir espaço.':'Regularidade, minutos e boa forma podem aproximar sua primeira oportunidade.'}</span></div>`:''}`}
 
 macro094.national=function(){const n=ensureNationalCareer(),moments=n.moments.slice().reverse();return this.page('profile-national','Perfil','Seleção e competições internacionais','Uma carreira paralela construída por desempenho, utilização, forma e grandes torneios.',`${c10InternationalSummary()}<div class="bMacroColumns"><section class="bPanel"><h2>O que pesa na convocação</h2>${c10InternationalFactors()}</section><section class="bPanel"><h2>Momentos internacionais</h2>${moments.map(m=>`<div class="bMilestone"><small>${m.year}</small><b>${bEsc(m.title)}</b><p>${bEsc(m.text)}</p></div>`).join('')||this.empty('Nenhum momento internacional registrado.')}</section></div>${this.panel('Ciclos da seleção',`<div class="c10Cycles">${c10CyclesTimeline()}</div>`)}`,[['Status',n.status],['Pico',n.statusPeak],['Jogos',P.caps],['Gols',P.ntGoals]])};
 
@@ -4910,7 +4916,7 @@ function c10EnsureEventDepth(){
  P.eventAnalytics??={presented:{},chosen:{},families:{},rare:0,followups:0};
  return P.eventAnalytics;
 }
-function c10EventPhaseKey(phase,event){return `${P.year}:${phase}:${event.id||event.t||event.title}`}
+function c10EventPhaseKey(phase,event){return `${event.c10Year??P.year}:${phase}:${event.id||event.t||event.title}`}
 function c10RecordPresented(event,phase){
  const a=c10EnsureEventDepth();if(!a)return event;
  const id=event.id||`${phase}_${P.year}`;a.presented[id]=(a.presented[id]||0)+1;
@@ -4928,18 +4934,18 @@ const c10ConsequenceCopy={
 };
 function c10ScheduleConsequence(event,opt,phase){
  c10EnsureEventDepth();
- if(event.consequenceId||P.pendingConsequences.some(x=>x.sourceYear===P.year)||P.pendingConsequences.length>=8)return;
+ if(event.consequenceId||P.pendingConsequences.some(x=>x.sourceYear===(event.c10Year??P.year))||P.pendingConsequences.length>=8)return;
  const magnitude=Object.values(opt.effects||{}).filter(Number.isFinite).reduce((n,v)=>n+Math.abs(v),0);
  if(magnitude<5&&!opt.memory&&!opt.flag&&!opt.personEffect)return;
  const family=eventFamilyOf(event),copy=c10ConsequenceCopy[family]||c10ConsequenceCopy.esportivo;
- P.pendingConsequences.push({id:`${P.year}_${phase}_${event.id||P.eventLedger.length}`,sourceId:event.id||'event',sourceYear:P.year,dueYear:P.year+1,family,title:copy[0],description:copy[1],originalTitle:event.t||event.title,originalChoice:opt.label,resolved:false});
+ P.pendingConsequences.push({id:`${P.year}_${phase}_${event.id||P.eventLedger.length}`,sourceId:event.id||'event',sourceYear:(event.c10Year??P.year),sourceClub:P.club?.name,sourcePerson:P.agentPerson?.id,dueYear:(event.c10Year??P.year)+1,family,title:copy[0],description:copy[1],originalTitle:event.t||event.title,originalChoice:opt.label,resolved:false});
 }
 function c10TrackChoice(event,opt,phase){
  if(!event||!opt)return;c10EnsureEventDepth();
  const id=event.id||`${phase}_${P.year}`,family=eventFamilyOf(event),key=c10EventPhaseKey(phase,event);
  if(P.eventLedger.some(x=>x.key===key))return;
  P.eventAnalytics.chosen[id]=(P.eventAnalytics.chosen[id]||0)+1;
- P.eventLedger.push({key,id,year:P.year,age:P.age,phase,family,title:event.t||event.title,choice:opt.label,rare:!!event.c10Rare,followup:!!event.consequenceId});
+ P.eventLedger.push({key,id,year:event.c10Year??P.year,age:event.c10Age??P.age,phase,family,title:event.t||event.title,choice:opt.label,rare:!!event.c10Rare,followup:!!event.consequenceId});
  P.eventLedger=P.eventLedger.slice(-80);
  if(event.consequenceId){const pending=P.pendingConsequences.find(x=>x.id===event.consequenceId);if(pending){pending.resolved=true;pending.resolvedYear=P.year;pending.resolution=opt.label}P.eventAnalytics.followups++;return}
  c10ScheduleConsequence(event,opt,phase);
@@ -4954,9 +4960,9 @@ function c10DueConsequenceEvent(){
 }
 function c10RareEvents(phase){const coach=P.club?getClubPeople(P,P.club)?.coach:null;return [
  {id:'c10_rare_homecoming',c10Phase:'opening',family:'legado',when:p=>p.formedClub&&p.club?.name===p.formedClub&&p.visited?.filter(x=>x!==p.formedClub).length>=2,t:'O retorno ao lugar onde tudo começou',d:`Anos depois, você veste novamente a camisa do ${P.formedClub}. Funcionários e jovens da base transformam o primeiro treino em uma cerimônia inesperada.`,opts:[{label:'Assumir a responsabilidade de referência',effects:{clubRel:7,rep:3,pressureTolerance:2},text:'O retorno passa a carregar uma promessa pública.'},{label:'Pedir que o foco permaneça no time',effects:{squad:4,morale:2},text:'A volta ganha um tom coletivo.'},{label:'Guardar a emoção para si',effects:{form:3,morale:3,media:-2},text:'O reencontro vira combustível silencioso.'}]},
- {id:'c10_rare_record',c10Phase:'late',family:'esportivo',when:p=>p.goals>=90||p.games>=250,title:'Um recorde histórico está ao alcance',desc:'Os números da carreira colocam você perto de uma marca que pertence à memória do clube e da competição.',opts:[{label:'Perseguir a marca abertamente',effects:{rep:4,form:3,physical:-3},mult:1.05,text:'Cada jogo passa a carregar uma contagem pública.'},{label:'Colocar o objetivo coletivo primeiro',effects:{squad:5,clubRel:3},mult:1.01,text:'A postura aumenta o respeito interno.'},{label:'Evitar acompanhar os números',effects:{morale:2,media:-2,pressureTolerance:2},mult:1.02,text:'A pressão diminui sem apagar a possibilidade.'}]},
- {id:'c10_rare_agent_break',c10Phase:'mid',family:'carreira',when:p=>p.agentPerson&&p.agent<42,title:'A relação com seu agente chega ao limite',desc:'Divergências sobre mercado, exposição e contrato tornam impossível adiar uma conversa definitiva.',opts:[{label:'Encerrar a parceria',effects:{agent:8,marketBoost:-2,morale:-1},text:'A carreira entra em uma transição de representação.'},{label:'Redefinir responsabilidades',effects:{agent:5,morale:2},mult:1.00,text:'A relação continua sob novas regras.'},{label:'Manter tudo até o fim da temporada',effects:{form:2,agent:-2},mult:1.01,text:'A ruptura é adiada para proteger o momento esportivo.'}]},
- {id:'c10_rare_coach_reunion',c10Phase:'opening',family:'relações',when:()=>!!coach&&Object.values(P.knownPeople||{}).some(x=>x.name===coach.name),t:`Um reencontro com ${coach?.name||'um antigo treinador'}`,d:'A nova temporada reúne novamente duas pessoas que já dividiram decisões importantes em outro momento da carreira.',opts:[{label:'Retomar a relação com confiança',effects:{coach:6,morale:2},personEffect:{target:'coach',delta:6,note:'O reencontro recuperou a confiança.'},text:'A história anterior vira um atalho para o entendimento.'},{label:'Começar a relação do zero',effects:{coach:2,form:2},text:'Passado e presente ficam separados.'},{label:'Cobrar clareza sobre seu papel',effects:{coach:-2,rep:2,minutesBonus:100},text:'O reencontro começa com uma negociação direta.'}]},
+ {id:'c10_rare_record',c10Phase:'late',family:'esportivo',when:p=>p.goals>=90||p.games>=250,title:'Uma marca pessoal dá dimensão à carreira',desc:`Você já soma ${P.games} jogos e ${P.goals} gols. O momento convida a decidir que significado dar aos números da sua própria trajetória.`,opts:[{label:'Perseguir a marca abertamente',effects:{rep:4,form:3,physical:-3},mult:1.05,text:'Cada jogo passa a carregar uma contagem pública.'},{label:'Colocar o objetivo coletivo primeiro',effects:{squad:5,clubRel:3},mult:1.01,text:'A postura aumenta o respeito interno.'},{label:'Evitar acompanhar os números',effects:{morale:2,media:-2,pressureTolerance:2},mult:1.02,text:'A pressão diminui sem apagar a possibilidade.'}]},
+ {id:'c10_rare_agent_break',c10Phase:'mid',family:'carreira',when:p=>p.agentPerson&&p.agent<42,title:'A relação com seu agente chega ao limite',desc:'Divergências sobre mercado, exposição e contrato tornam impossível adiar uma conversa definitiva.',opts:[{label:'Suspender negociações e preservar a parceria',effects:{agent:8,marketBoost:-2,morale:-1},text:'Você mantém o agente, reduz a exposição ao mercado e dá tempo para reorganizar a relação.'},{label:'Redefinir responsabilidades',effects:{agent:5,morale:2},mult:1.00,text:'A relação continua sob novas regras.'},{label:'Manter tudo até o fim da temporada',effects:{form:2,agent:-2},mult:1.01,text:'A ruptura é adiada para proteger o momento esportivo.'}]},
+ {id:'c10_rare_coach_reunion',c10Phase:'opening',family:'relações',when:()=>c10HasCoachReunion(coach),t:`Um reencontro com ${coach?.name||'um antigo treinador'}`,d:'A nova temporada reúne novamente duas pessoas que já dividiram decisões importantes em outro momento da carreira.',opts:[{label:'Retomar a relação com confiança',effects:{coach:6,morale:2},personEffect:{target:'coach',delta:6,note:'O reencontro recuperou a confiança.'},text:'A história anterior vira um atalho para o entendimento.'},{label:'Começar a relação do zero',effects:{coach:2,form:2},text:'Passado e presente ficam separados.'},{label:'Cobrar clareza sobre seu papel',effects:{coach:-2,rep:2,minutesBonus:100},text:'O reencontro começa com uma negociação direta.'}]},
  {id:'c10_rare_country_captain',c10Phase:'late',family:'seleção',when:p=>p.caps>=35&&!p.nationalCareer?.captain,title:`A braçadeira de ${P.nation} entra na conversa`,desc:'Jogadores e comissão discutem quem deve representar o próximo ciclo da seleção dentro e fora de campo.',opts:[{label:'Dizer que está pronto',effects:{selectionBoost:.09,rep:4,pressureTolerance:3},mult:1.02,text:'A candidatura se torna pública.'},{label:'Apoiar a liderança atual',effects:{squad:3,morale:2,selectionBoost:.03},mult:1.01,text:'A postura coletiva fortalece sua posição.'},{label:'Evitar qualquer campanha',effects:{form:2,media:-2,selectionBoost:.01},mult:1.00,text:'A decisão fica inteiramente com a comissão.'}]}
  ].filter(e=>e.c10Phase===phase&&(!e.when||e.when(P))&&!seenEvent(e.id)&&!c10RecentEventIds().includes(e.id))}
 function c10DepthSelect(baseFactory,phase){
@@ -5008,7 +5014,7 @@ showLateSeasonEvent=function(){
  s.c10PulseDone=true;
  if(Math.random()>.82)return c10SeasonLiveLateBase();
  const event=c10MakeSeasonPulse();s.c10PulseEvent=event;P.seasonEventCount=(P.seasonEventCount||0)+1;
- bRenderEvent(event,'Momento da temporada',c10ResolveSeasonPulse,c10SeasonPulse());
+ bRenderEvent(event,'Momento da temporada',c10ResolveSeasonPulse);
 };
 function c10ResolveSeasonPulse(index){
  const s=P.activeSeason,e=normalizeNarrativeEvent(s.c10PulseEvent),o=e.opts[index];
@@ -5055,14 +5061,14 @@ function c10WeightedClub(pool,player,target,avoid=[]){
 function c10InitialOffers(player,refresh=false){
  const avoid=refresh?(player.lastOfferBatch||[]):[],home=activeClubs().filter(c=>c.country===player.nation&&!avoid.includes(c.name));
  const domestic=home.length>=5?home:activeClubs().filter(c=>!avoid.includes(c.name));
- const chosen=[];const add=(pool,target,type='protagonist')=>{const club=c10WeightedClub(pool,player,target,[...avoid,...chosen.map(o=>o.club.name)]);if(club)chosen.push(makeOffer(player,club,type))};
+ const chosen=[],targetCount=Math.min(5,domestic.length);const add=(pool,target,type='protagonist')=>{const club=c10WeightedClub(pool,player,target,[...avoid,...chosen.map(o=>o.club.name)]);if(club)chosen.push(makeOffer(player,club,type))};
  const high=domestic.filter(c=>clubOvr(c)>=player.ovr+6&&clubOvr(c)<=Math.max(86,player.ovr+15));
  if(high.length&&Math.random()<.68)add(high,player.ovr+10,'leap');
  add(domestic.filter(c=>c.league==='Brasileirão'),player.ovr+6,'lateral');
  add(domestic.filter(c=>Math.abs(clubOvr(c)-(player.ovr+4))<=8),player.ovr+4,'protagonist');
  const second=domestic.filter(c=>c.league==='Série B');if(second.length)add(second,player.ovr+1,'protagonist');
  add(domestic.filter(c=>c.development>=72),player.ovr+3,'surprise');
- while(chosen.length<5)add(domestic,player.ovr+rnd(1,11),pick(['protagonist','lateral','surprise','leap']));
+ while(chosen.length<targetCount){const before=chosen.length;add(domestic,player.ovr+rnd(1,11),pick(['protagonist','lateral','surprise','leap']));if(chosen.length===before)break;}
  player.lastOfferBatch=chosen.map(o=>o.club.name);player.recentOffers=[...(player.recentOffers||[]),...player.lastOfferBatch].slice(-35);return chosen.slice(0,5);
 }
 const c10MarketVarietyBase=buildMarketOffers;
@@ -5075,10 +5081,163 @@ bOfferCard=function(o,i,mid){
 const c10LegacyOfferCardBase=offerCardHtml;
 offerCardHtml=function(o,i,initial=false){return c10LegacyOfferCardBase(o,i,initial).replace(`${o.club.country} · ${o.club.league}`,`${o.club.country} · ${c10CompetitionLabel(o.club)}`)};
 
+/* v0.9.18 — Correções de Continuidade. No new game modes or balance targets. */
+function c10RepairSavedPeople(player){
+ if(!player)return;
+ const start=player.history?.[0]?.year??player.year-Math.max(0,player.age-16);
+ const clubName=value=>value&&typeof value==='object'?value.name||'Contexto desconhecido':value;
+ for(const known of Object.values(player.knownPeople||{})){
+  known.club=clubName(known.club);known.firstClub=clubName(known.firstClub);
+  if(known.firstYear>known.lastYear)known.firstYear=known.lastYear;
+  if(known.firstYear>player.year)known.firstYear=start;
+  for(const ctx of known.contexts||[]){ctx.club=clubName(ctx.club);if(ctx.from>ctx.to)ctx.from=ctx.to;if(ctx.from>player.year)ctx.from=start;if(ctx.to>player.year)ctx.to=player.year;}
+  for(const note of known.notes||[])if(note.year>player.year)note.year=known.firstYear;
+ }
+ for(const row of player.peopleHistory||[]){row.club=clubName(row.club);if(row.year>player.year)row.year=start;}
+ for(const memory of player.memories||[])if(!memory.year&&Number.isFinite(memory.age))memory.year=start+memory.age-16;
+}
+function c10HasCoachReunion(coach){
+ if(!coach||!P.club)return false;
+ const known=P.knownPeople?.[coach.id];
+ return !!known&&(known.contexts||[]).some(c=>typeof c.club==='string'&&c.club!==P.club.name&&c.from<=P.year);
+}
+const c10ArcsBefore018=arcNarrativeEvents;
+arcNarrativeEvents=function(){
+ const people=P.club?getClubPeople(P,P.club):null;
+ for(const arc of P.storyArcs||[]){
+  if(arc.status!=='active'||!['coach_conflict','internal_rivalry'].includes(arc.type))continue;
+  const person=arc.type==='coach_conflict'?people?.coach:clubSquad(P,P.club).find(x=>arc.data?.personId?x.id===arc.data.personId:x.name===arc.person);
+  const valid=arc.club===P.club?.name&&person&&(arc.data?.personId?person.id===arc.data.personId:person.name===arc.person);
+  if(!valid)resolveStoryArc(arc,'O contexto mudou: a disputa interna deixou de envolver o mesmo clube e as mesmas pessoas.','context_changed');
+ }
+ return c10ArcsBefore018();
+};
+
+function c10AutoDecision(event,opt,phase){
+ if(!event||!opt)return;
+ applyAutoOption(opt);registerArcFromChoice(event,opt);handleArcAction(event,opt);applyPersistentRelationsFromChoice(event,opt);c10TrackChoice(event,opt,phase);
+ P.storyLog.push({year:P.year,age:P.age,club:P.club.name,eventId:event.id,title:event.t||event.title,choice:opt.label,text:opt.text||'',follow:!!event.follow});
+ rememberNarrativeFamily(eventFamilyOf(event));
+ P.eventHistory??=[];P.eventHistory.push(event.id);P.eventHistory=P.eventHistory.slice(-30);
+}
+
+function c10ResolveNationalChoice(season,event,index){
+ const opt=event.opts[index];if(!opt)return;
+ event.c10Year=season.year;event.c10Age=season.age;
+ applyEffects(opt.effects||{});
+ if(opt.clubContext&&opt.effects?.clubRel)adjustClubRelationship(P.club.name,{boardTrust:opt.effects.clubRel},`Conflito explícito de carga entre ${P.club.name} e a seleção.`);
+ P.storyLog.push({year:season.year,age:season.age,club:P.nation,eventId:event.id,title:event.t,choice:opt.label,text:opt.text,follow:false});
+ ensureNationalCareer().moments.push({year:season.year,title:event.t,text:opt.label+' — '+opt.text});
+ c10TrackChoice(event,opt,'national');rememberNarrativeFamily('seleção');season.nationalDecisionResolved=true;
+ renderPlayer();renderChoiceResult({event,opt,buttonLabel:'Ver resumo da temporada',onContinue:()=>showSeasonSummary(season)});
+}
+function c10ResolveRecoveryChoice(event,index){
+ const opt=event.opts[index],injury=physicalState().active;if(!opt||!injury)return;
+ injury.mode=opt.mode;
+ if(opt.mode==='early')injury.remaining=Math.ceil(injury.remaining*.7);
+ if(opt.mode==='protect')injury.remaining+=10;
+ applyEffects(opt.effects||{});injuryNote(event.t,`${opt.label}: ${opt.text}`);renderPlayer();
+ const next=event.id.endsWith('_second')?finishSeason:simulateSeason;
+ renderChoiceResult({event,opt,buttonLabel:'Continuar temporada',onContinue:next});
+}
+
+// Keep snapshots immutable and writes ordered. A late older write must not win.
+let c10CheckpointQueue=Promise.resolve(),c10SaveFailureShown=false,c10RestoringFlow=false;
+saveWorldCheckpoint=function(){
+ if(diagnosticMode091||P?.autoSeason091||!P?.world)return Promise.resolve();
+ c10RepairSavedPeople(P);
+ const checkpoint=JSON.parse(JSON.stringify({version:73,balanceVersion:'0.9.1',format:'indexeddb-compact-squads-1',player:{...P,worldSquads:packWorldSquads(P.worldSquads)},clubs}));
+ const write=()=>c10OpenBase2023Database().then(db=>new Promise((resolve,reject)=>{
+  const tx=db.transaction(CAREER_DB_STORE,'readwrite');tx.objectStore(CAREER_DB_STORE).put(checkpoint,'latest');
+  tx.oncomplete=()=>{db.close();resolve();};tx.onerror=()=>{db.close();reject(tx.error);};tx.onabort=()=>{db.close();reject(tx.error||Error('Gravação interrompida'));};
+ })).catch(()=>{
+  try{localStorage.setItem(C10_BASE2023_WORLD_KEY,JSON.stringify({...checkpoint,format:'compact-squads-1'}));}
+  catch(error){if(!c10SaveFailureShown){c10SaveFailureShown=true;alert('Não foi possível salvar a carreira. Exporte seus dados antes de fechar o jogo.');}throw error;}
+ });
+ c10CheckpointQueue=c10CheckpointQueue.catch(()=>{}).then(write);
+ return c10CheckpointQueue.catch(()=>{});
+};
+function c10FlowPhase(kind,event){
+ if(event?.id?.startsWith('recovery_'))return 'recovery';
+ if(event?.id?.startsWith('selection_')||kind.startsWith('Seleção'))return 'national';
+ if(kind==='Momento da temporada')return 'pulse';
+ if(kind==='Metade da temporada')return 'mid';
+ if(kind==='Reta final')return 'late';
+ return 'opening';
+}
+function c10KeepFlow(flow){
+ if(!P||diagnosticMode091||P.autoSeason091)return;
+ P.savedFlow=JSON.parse(JSON.stringify(flow));
+ if(!c10RestoringFlow)saveWorldCheckpoint();
+}
+const c10EventBefore018=bRenderEvent;
+bRenderEvent=function(event,kind,onChoose,extra=''){
+ event=normalizeNarrativeEvent(event);
+ const phase=c10FlowPhase(kind,event);
+ c10KeepFlow({kind:'event',phase,event,stage:kind,extra});
+ const choose=phase==='national'?i=>c10ResolveNationalChoice(P.lastSeason,event,i):phase==='recovery'?i=>c10ResolveRecoveryChoice(event,i):onChoose;
+ return c10EventBefore018(event,kind,choose,extra);
+};
+const c10ResultBefore018=renderChoiceResult;
+renderChoiceResult=function({event,opt,buttonLabel='Continuar',onContinue}){
+ const phase=P.savedFlow?.phase||c10FlowPhase('',event);
+ c10KeepFlow({kind:'consequence',phase,event,opt,buttonLabel});
+ return c10ResultBefore018({event,opt,buttonLabel,onContinue:()=>{
+  P.savedFlow=null;onContinue();
+  if(!P.savedFlow&&!diagnosticMode091)saveWorldCheckpoint();
+ }});
+};
+const c10SummaryBefore018=showSeasonSummary;
+showSeasonSummary=function(season){
+ if(!diagnosticMode091)c10KeepFlow({kind:'summary'});
+ return c10SummaryBefore018(season);
+};
+const c10MarketBefore018=bMarket;
+bMarket=function(batch,options={}){
+ c10KeepFlow({kind:'market',batch,options,selected:bUi.selected});
+ return c10MarketBefore018(batch,options);
+};
+function c10ContinueFlow(flow){
+ switch(flow.phase){
+  case 'opening':return simulateSeason();
+  case 'mid':return flow.opt?.action==='market'?showMidseasonMarket(!!flow.opt.loanPreferred):showLateSeasonEvent();
+  case 'pulse':return c10SeasonLiveLateBase();
+  case 'late':return finishSeason();
+  case 'national':return showSeasonSummary(P.lastSeason);
+  case 'recovery':return flow.event.id.endsWith('_second')?finishSeason():simulateSeason();
+  default:return showSeasonSummary(P.lastSeason);
+ }
+}
+function c10RestoreFlow(){
+ const flow=P?.savedFlow;if(!flow)return false;
+ c10RestoringFlow=true;
+ try{
+  if(flow.kind==='summary'){if(!P.lastSeason)return false;showSeasonSummary(P.lastSeason);}
+  else if(flow.kind==='market'){
+   const batch=(flow.batch||[]).map(o=>({...o,club:clubByName(o.club.name)||o.club}));
+   bUi.selected=flow.selected??null;if(flow.options?.mid)P.midOffers=batch;else offers=batch;
+   bMarket(batch,flow.options||{});
+  }else if(flow.kind==='consequence'){
+   renderChoiceResult({event:flow.event,opt:flow.opt,buttonLabel:flow.buttonLabel,onContinue:()=>c10ContinueFlow(flow)});
+  }else if(flow.kind==='event'){
+   let choose;
+   if(flow.phase==='opening'){currentEvent=flow.event;choose=resolveEvent;}
+   else if(flow.phase==='mid'){P.activeSeason.midEvent=flow.event;choose=resolveMidseason;}
+   else if(flow.phase==='late'){P.activeSeason.lateEvent=flow.event;choose=resolveLateSeasonEvent;}
+   else if(flow.phase==='pulse'){P.activeSeason.c10PulseEvent=flow.event;choose=c10ResolveSeasonPulse;}
+   else if(flow.phase==='national')choose=i=>c10ResolveNationalChoice(P.lastSeason,flow.event,i);
+   else if(flow.phase==='recovery')choose=i=>c10ResolveRecoveryChoice(flow.event,i);
+   else return false;
+   bRenderEvent(flow.event,flow.stage,choose,flow.extra||'');
+  }else return false;
+  return true;
+ }finally{c10RestoringFlow=false;}
+}
+
 
 })();
 //# sourceURL=carreira10-engine.js
 </script>
-<div class="c10BuildStamp" hidden>Carreira 10 v0.9.17 · Mercado Inicial Ampliado · base 2023.2 · cinco propostas iniciais · save schema 73</div>
+<div class="c10BuildStamp" hidden>Carreira 10 v0.9.18 · Correções de Continuidade · base 2023.1 · equilíbrio global 2 · save schema 73</div>
 </body>
 </html>
