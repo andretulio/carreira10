@@ -5377,7 +5377,9 @@ simulateHalf=function(club,fraction=.5,multiplier=1){
 function c10UsageExplanation(){
  const f=P.activeSeason?.first;if(!f||!P.club)return '';
  const r=f.usageReading,current=!r,rows=r?.factors||c10UsageFactors(P,P.club);
- return `<section class="bPanel c10UsageExplain"><h2>Como seu espaço é calculado</h2><p>${current?'Leitura do contexto atual; esta carreira não guardou os fatores da primeira metade.':'Fatores registrados antes da simulação da primeira metade.'} Eles atuam juntos; nenhum determina sozinho a escalação.</p><ul>${rows.map(x=>`<li><span>${bEsc(x.label)}</span><b>${x.factor<.995?'reduz a projeção':x.factor>1.005?'favorece a projeção':'neutro'} · ×${x.factor.toFixed(2)}</b></li>`).join('')}</ul>${r?`<p>Projeção anual naquele momento: ${r.expected} min. Ajuste anual de escolhas: ${r.bonus>0?'+':''}${r.bonus} min. Multiplicador do período: ×${r.multiplier.toFixed(2)}.</p><p>${r.injuryLoss} minutos foram retirados pelo cálculo de afastamento e retorno gradual.</p>`:''}<p>A simulação também considera idade, base de utilização, desenvolvimento do clube, calendário, moral e variação do período. Projeção não é promessa de escalação.</p></section>`;
+ const limits=rows.filter(x=>x.factor<.995).sort((a,b)=>a.factor-b.factor).slice(0,2).map(x=>x.label.toLowerCase());
+ const short=limits.length?`Entre os fatores que limitam ${current?'a projeção atual':'a projeção registrada'}: ${limits.join(' e ')}.`:'Os fatores registrados não apontam uma limitação forte nesta leitura.';
+ return `<section class="bPanel c10UsageExplain"><h2>Seu espaço em campo</h2><p>${bEsc(short)}</p><details class="bDetails"><summary>Entender minha utilização</summary><p>${current?'Leitura do contexto atual; esta carreira não guardou os fatores da primeira metade.':'Fatores registrados antes da simulação da primeira metade.'} Eles atuam juntos; nenhum determina sozinho a escalação.</p><ul>${rows.map(x=>`<li><span>${bEsc(x.label)}</span><b>${x.factor<.995?'reduz a projeção':x.factor>1.005?'favorece a projeção':'neutro'}</b></li>`).join('')}</ul>${r?`<p>Projeção anual naquele momento: ${r.expected} min. Ajuste anual de escolhas: ${r.bonus>0?'+':''}${r.bonus} min.</p><p>${r.injuryLoss} minutos foram retirados pelo cálculo de afastamento e retorno gradual.</p>`:''}<p>A simulação também considera idade, base de utilização, desenvolvimento do clube, calendário, moral e variação do período. Projeção não é promessa de escalação.</p><details><summary>Ver fatores numéricos</summary><p>${rows.map(x=>`${bEsc(x.label)}: ×${x.factor.toFixed(2)}`).join(' · ')}${r?` · Multiplicador do período: ×${r.multiplier.toFixed(2)}`:''}</p></details></details></section>`;
 }
 const c10ThreadLiveBase=c10LiveContext;
 c10LiveContext=function(){return c10ThreadLiveBase()+c10UsageExplanation()};
@@ -5437,7 +5439,7 @@ function c10ThreadReturn(a){
   description=`A lesão registrada no ${a.club} levou você a escolher “${a.choice}”. O registro médico soma ${facts.days} dias afastado e ${facts.relapses} recaída(s). Em ${s.year}, houve ${s.minutes} minutos em campo.${facts.recovered?' O tratamento dessa lesão foi concluído.':' O tratamento dessa lesão ainda exige acompanhamento.'} Esses dados não isolam a causa de uma recaída nem garantem a recuperação futura.`;
   opts=facts.availableNow?[
    {label:'Reconquistar posição com carga gradual',intent:'gradual',effects:{physical:3,minutesBonus:-120},text:'Você preserva a preparação física e aceita menor utilização imediata.'},
-   {label:'Disputar a posição com mais intensidade',intent:'compete',effects:{minutesBonus:160,physical:-3},text:'Você aumenta a projeção de utilização e o desgaste; os riscos médicos continuam sendo calculados pelo sistema físico.'},
+   {label:'Disputar a posição com mais intensidade',intent:'compete',effects:{minutesBonus:160,physical:-3},text:'Você aumenta a projeção de utilização e o desgaste; o aumento de carga também pode custar disponibilidade.'},
    {label:'Buscar um clube com mais espaço',intent:'search',effects:{agent:2,clubRel:-3},text:'Seu agente buscará minutos no próximo mercado. A mudança de clube não cura a lesão nem garante escalação.'}
   ]:[
    {label:'Manter a recuperação como prioridade',intent:'protect',effects:{physical:2,marketBoost:-2},text:'Você reduz a pressão de mercado. Não há liberação médica nem redução automática do prazo da lesão.'},
@@ -5472,7 +5474,7 @@ function c10MentorEvent(){
  const young=clubSquad(P,P.club).filter(x=>x.age<=22).sort((a,b)=>b.ovr-a.ovr)[0];if(!young)return null;
  // Apenas uma cena elegível; o registro só nasce ao escolher.
  return normalizeNarrativeEvent({id:`c10_mentor_${P.year}`,t:'Que espaço cabe à sua experiência?',title:'Que espaço cabe à sua experiência?',d:`${young.name}, ${young.age} anos, está no elenco do ${P.club.name}. Você pode dedicar parte da rotina a apoiá-lo ou preservar o foco na própria utilização.`,family:'relações',c10Mentor:{personId:young.id,personName:young.name,personAge:young.age,club:P.club.name,year:P.year},opts:[
- {label:'Compartilhar a rotina e aceitar menos minutos',intent:'mentor',effects:{squad:4,coach:2,minutesBonus:-120},text:'Você assume apoio ao jovem e cede utilização imediata. O jogo registra a convivência, sem prometer evolução automática a ele.'},
+ {label:'Compartilhar a rotina e aceitar menos minutos',intent:'mentor',effects:{squad:4,coach:2,minutesBonus:-120},text:'Você assume apoio ao jovem e cede utilização imediata. A convivência pode marcar a relação, mas o desenvolvimento dele continua sendo um caminho próprio.'},
  {label:'Priorizar minha disputa por posição',intent:'compete',effects:{form:3,minutesBonus:100,squad:-2},text:'Você preserva o protagonismo e se distancia dessa responsabilidade coletiva.'}
  ]});
 }
@@ -5601,6 +5603,7 @@ macro094['event-ledger']=function(){
  const cards=threads.map(a=>`<article class="c10EventLedgerItem"><div><small>${a.year} · ${bEsc(a.club)} · ${a.status==='resolved'?'ENCERRADO':'EM ANDAMENTO'}</small><h3>${bEsc(a.title)}</h3><p>${bEsc(a.choice||'A intenção será definida na próxima abertura disponível.')}</p>${a.facts?`<p>${a.facts.minutes??0} minutos registrados. ${bEsc(a.ending||'')}</p>`:'<p>O retorno usará os dados da temporada e a presença dos personagens.</p>'}</div></article>`).join('');
  return html.replace('<div class="c10EventFamilyBars">',`<section aria-label="Vínculos e recuperação"><h2>Vínculos, recuperação e experiência</h2>${cards}</section><div class="c10EventFamilyBars">`);
 };
+
 
 
 })();
