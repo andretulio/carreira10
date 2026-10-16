@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Carreira 10 — v0.9.21 · Identidade de Clube</title>
+<title>Carreira 10 — v0.9.22 · Escolhas com Continuidade</title>
 <style>
 :root{
   --bg:#090e0a;--p:#101812;--p2:#151f17;--p3:#0d140f;--ln:#29372c;--tx:#f2f5f2;--mu:#9fad9f;
@@ -461,13 +461,15 @@ body.c10FontLarge{--c10-body:15px;--c10-detail:14px;--c10-caption:12px;--c10-lea
 .bGame .bHero h1{font-weight:400}
 
 
+.c22Context{font-size:13px;line-height:1.6;color:#becbd5;margin:14px 0;padding:12px 14px;border-left:3px solid var(--a3-accent,#ff872d);background:#101c26;border-radius:4px}.c22Context p{margin:0 0 6px}.c22Context p:last-child{margin:0}.bGame .a3Result{grid-template-columns:minmax(0,.85fr) minmax(0,1.15fr);align-items:start}.bGame .c22ResultStory{padding:24px;background:#101c26}.bGame .c22ResultStory h1{font-size:clamp(26px,3vw,40px);line-height:1.12;margin:12px 0 18px}.c22ResultStory .a3Metrics{margin-top:20px}.c22Closure{margin:0 0 18px;padding:20px 24px}.c22Closure p{line-height:1.65}.c22Closure small{color:#aebcc7;line-height:1.5;display:block}.bGame .a3Result .a3Metrics{grid-template-columns:repeat(3,minmax(0,1fr))}.bGame .a3Result .a3Metrics dd{overflow-wrap:anywhere}@media(max-width:1100px){.bGame .a3Result{grid-template-columns:1fr}}@media(max-width:700px){.bGame .c22ResultStory,.c22Closure{padding:18px}.c22Context{font-size:12px}}
+
 </style>
 </head>
 <body>
 <div class="wrap">
   <div class="top">
     <div class="brand">CARREIRA <span>10</span></div>
-    <div class="tag">v0.9.21 · Identidade de Clube</div>
+    <div class="tag">v0.9.22 · Escolhas com Continuidade</div>
   </div>
 
   <section id="setup" class="panel">
@@ -4602,7 +4604,7 @@ new MutationObserver(()=>bSync()).observe($('game'),{attributes:true,attributeFi
 const bEngineRetire=retire;retire=function(){const result=bEngineRetire();if(!diagnosticMode091){bUi.pending={kind:"retired",stage:"Carreira encerrada",title:"Sua história deixou um legado",text:P.name+" · "+P.games+" jogos · "+P.goals+" gols · "+P.trophies+" títulos",scene:"stadium"};bRoute("flow")}return result};
 
 /* v0.9.3 — portability and recovery tools. The save schema remains version 73. */
-const C10_RELEASE='0.9.21';
+const C10_RELEASE='0.9.22';
 const C10_EXPORT_KIND='carreira10-save';
 
 function c10Download(name,text,type='application/json'){
@@ -4861,7 +4863,7 @@ function c10OpeningEvents(){const people=P.club?getClubPeople(P,P.club):null,riv
 ]}
 function c10MidEvents(){const first=P.activeSeason?.first||{},people=getClubPeople(P,P.club);return [
  {id:'c10_mid_cup_rotation',family:'esportivo',when:()=>first.games>=4,title:'A copa abre uma rota diferente para ganhar espaço',desc:'A comissão pretende rodar o elenco, e os próximos jogos eliminatórios podem redefinir a hierarquia.',opts:[{label:'Pedir sequência na copa',effects:{coach:3,form:2},mult:1.04,text:'Você usa a competição como porta de entrada.'},{label:'Priorizar a liga',effects:{physical:3,rep:1},mult:.98,text:'Você preserva energia para o calendário principal.'},{label:'Aceitar qualquer função',effects:{squad:3,coach:2},mult:1.01,text:'A versatilidade aumenta suas chances.'}]},
- {id:'c10_mid_derby',family:'torcida',title:'A semana do clássico muda o ambiente',desc:'Treinos fechados, cobranças na rua e mensagens da torcida transformam a próxima partida em algo maior.',opts:[{label:'Abraçar a pressão do clássico',effects:{rep:3,clubRel:4,physical:-2},mult:1.04,text:'Você entra no centro da expectativa.'},{label:'Tratar como mais um jogo',effects:{form:3,pressureTolerance:2},mult:1.01,text:'A rotina protege seu desempenho.'},{label:'Evitar exposição durante a semana',effects:{media:-2,morale:2},mult:1.00,text:'O foco fica dentro do clube.'}]},
+ {id:'c10_mid_derby',family:'torcida',title:'A cobrança da torcida muda o ambiente',desc:'As mensagens da torcida aumentam a pressão por regularidade na segunda metade da temporada. Sua resposta será avaliada pelo período, sem depender de uma partida específica.',opts:[{label:'Assumir a cobrança da torcida',effects:{rep:3,clubRel:4,physical:-2},mult:1.04,text:'Você entra no centro da expectativa.'},{label:'Preservar a rotina de preparação',effects:{form:3,pressureTolerance:2},mult:1.01,text:'A rotina protege seu desempenho.'},{label:'Evitar exposição durante a semana',effects:{media:-2,morale:2},mult:1.00,text:'O foco fica dentro do clube.'}]},
  {id:'c10_mid_partnership',family:'relações',title:`${people?.teammate?.name||'Um companheiro'} propõe uma parceria de treino`,desc:'A produção ofensiva pode crescer com sessões extras de movimentação e passe, mas a carga física já é alta.',opts:[{label:'Treinar a parceria',effects:{squad:4,form:3,physical:-2},mult:1.04,text:'A conexão começa a aparecer em campo.'},{label:'Fazer apenas análise de vídeo',effects:{squad:2,physical:2},mult:1.01,text:'A evolução vem com menor desgaste.'},{label:'Manter o plano individual',effects:{growthBoost:.12,squad:-1},mult:1.00,text:'Seu desenvolvimento segue como prioridade.'}]},
  {id:'c10_mid_contract_check',family:'carreira',when:p=>!!p.contract,title:'O clube revisa as promessas do contrato',desc:'Diretoria, treinador e agente divergem sobre quanto do projeto original realmente está sendo cumprido.',opts:[{label:'Pedir compromissos por escrito',effects:{agent:3,clubRel:-2,coach:-1},mult:1.03,text:'A cobrança fica objetiva e formal.'},{label:'Negociar um novo plano esportivo',effects:{coach:4,clubRel:2},mult:1.02,text:'As expectativas são recalibradas.'},{label:'Esperar o fim do ano',effects:{morale:2,form:2},mult:1.00,text:'Você adia o conflito.'}]},
  {id:'c10_mid_selection_load',family:'seleção',when:p=>p.caps>0||p.selectionBoost>0,title:'Clube e seleção discordam sobre sua carga',desc:'A comissão do clube quer recuperação; a seleção pede disponibilidade total para a próxima data.',opts:[{label:'Priorizar a seleção',effects:{selectionBoost:.06,physical:-4,clubRel:-2},mult:.98,text:'Seu espaço internacional cresce, com tensão no clube.'},{label:'Seguir o plano do clube',effects:{physical:5,selectionBoost:-.03,clubRel:2},mult:1.00,text:'O corpo agradece e a seleção registra a escolha.'},{label:'Propor carga compartilhada',effects:{physical:2,selectionBoost:.02,coach:1},mult:1.01,text:'As comissões encontram um meio-termo.'}]},
@@ -4956,7 +4958,7 @@ const c10ConsequenceCopy={
 };
 function c10ScheduleConsequence(event,opt,phase){
  c10EnsureEventDepth();
- if(event.consequenceId||P.pendingConsequences.some(x=>x.sourceYear===(event.c10Year??P.year))||P.pendingConsequences.length>=8)return;
+ if(event.consequenceId||P.pendingConsequences.some(x=>x.sourceYear===(event.c10Year??P.year))||P.pendingConsequences.filter(x=>!x.resolved).length>=8)return;
  const magnitude=Object.values(opt.effects||{}).filter(Number.isFinite).reduce((n,v)=>n+Math.abs(v),0);
  if(magnitude<5&&!opt.memory&&!opt.flag&&!opt.personEffect)return;
  const family=eventFamilyOf(event),copy=c10ConsequenceCopy[family]||c10ConsequenceCopy.esportivo;
@@ -5658,9 +5660,9 @@ function a3Metrics(event){
  const space=event?.c10Space;
  let metrics;
  if(thread?.type==='club'&&event.c10Thread.stage==='start')metrics=[['Minutos previstos',`${thread.oldMinutes.toLocaleString('pt-BR')} → ${thread.target.toLocaleString('pt-BR')}`],['Salário semanal',`€${thread.oldSalary} mil → €${thread.newSalary} mil`],['Nível do clube',`${thread.oldLevel} → ${thread.newLevel}`]];
- else if(P.activeSeason?.first){const f=P.activeSeason.first;metrics=[['Minutos até aqui',f.minutes.toLocaleString('pt-BR')],['Produção',`${f.goals} gols · ${f.assists} assist.`],['Projeção anual',(P.activeSeason.promise?.minutes||0).toLocaleString('pt-BR')]];}
+ else if(P.activeSeason?.first){const f=P.activeSeason.first;metrics=[['Minutos até aqui',f.minutes.toLocaleString('pt-BR')],['Produção',`${f.goals} gols · ${f.assists} assist.`],['Referência no início do ano',(P.activeSeason.promise?.minutes||0).toLocaleString('pt-BR')]];}
  else metrics=[['Forma',Math.round(P.form)],['Moral',Math.round(P.morale)],['Físico',Math.round(P.physical)]];
- return `<dl class="a3Metrics">${metrics.map(([label,value])=>`<div><dt>${bEsc(label)}</dt><dd>${bEsc(value)}</dd></div>`).join('')}</dl>${thread?.type==='club'||space||P.activeSeason?'<p class="a3Caveat">Projeções de minutos, não garantias de escalação.</p>':''}`;
+ return `<dl class="a3Metrics">${metrics.map(([label,value])=>`<div><dt>${bEsc(label)}</dt><dd>${bEsc(value)}</dd></div>`).join('')}</dl>${c22DecisionContext(event)}${thread?.type==='club'||space||P.activeSeason?'<p class="a3Caveat">Projeções de minutos, não garantias de escalação.</p>':''}`;
 }
 function a3Hero({title,text,stage,event,action=''}){
  const thread=event?.c10Thread?c10Thread(event.c10Thread.id):null;
@@ -5669,9 +5671,10 @@ function a3Hero({title,text,stage,event,action=''}){
  return `<section class="a3Hero"><div class="a3PlayerArt" style="background-image:url('${A3_ART.player}');background-position:${a3AgePosition()} top" aria-hidden="true"></div><div class="a3HeroCopy"><span class="a3Kicker">${bEsc(stage||'Sua história em campo')}</span><h1>${bEsc(title)}</h1><p class="a3StoryText">${bEsc(short||'')}</p>${action}${a3Metrics(event)}${compact?`<details class="a3FullContext"><summary>Ver contexto completo</summary><p>${bEsc(text)}</p></details>`:''}</div></section>`;
 }
 function a3Journey(){
- const phase=P.savedFlow?.phase||'opening',stage=P.activeSeason?.first?(phase==='late'?3:2):P.lastSeason&&bUi.pending?.kind==='summary'?4:1;
+ const phase=P.savedFlow?.phase||'opening';
+ const stage=({opening:0,mid:2,pulse:2,late:3,national:4,recovery:P.savedFlow?.event?.id?.endsWith('_second')?3:1})[phase]??0;
  const labels=['Chegada','Adaptação','Primeira metade','Reta final','Balanço'];
- return `<nav class="a3Journey" aria-label="Momento da temporada">${labels.map((l,i)=>`<span class="${i===stage?'active':i<stage?'done':''}" ${i===stage?'aria-current="step"':''}><i aria-hidden="true">${i<stage?'✓':i+1}</i>${l}</span>`).join('')}</nav>`;
+ return '<nav class="a3Journey" aria-label="Momento da temporada">'+labels.map((l,i)=>'<span class="'+(i===stage?'active':i<stage?'done':'')+'" '+(i===stage?'aria-current="step"':'')+'><i aria-hidden="true">'+(i<stage?'✓':i+1)+'</i>'+l+'</span>').join('')+'</nav>';
 }
 function a3OptionDetails(option){
  const extras=[];
@@ -5693,7 +5696,7 @@ function a3RenderResult({event,opt,buttonLabel='Continuar',onContinue}){
  if(opt.oldBond)(opt.oldBond>0?gains:costs).push(`Torcida anterior ${opt.oldBond>0?'+':''}${opt.oldBond}`);
  if(opt.actorDelta)(opt.actorDelta>0?gains:costs).push(`Relação pessoal ${opt.actorDelta>0?'+':''}${opt.actorDelta}`);
  const title=opt.label,text=opt.text||'A escolha passa a fazer parte da sua carreira.';
- bMount({kind:'consequence',stage:'Consequência da decisão',title,text,scene:bEventScene(event)},`<div class="a3Scene a3Result"><div>${a3Hero({title,text,stage:'Consequência da escolha',event})}</div><div class="a3DecisionColumn">${a3Speaker(event)}<section class="a3Outcome"><span class="a3Kicker">Decisão registrada</span><h2>O que mudou agora</h2><div class="a3OutcomeGrid"><section><h3>Ganhos imediatos</h3>${gains.length?gains.map(t=>`<p class="positive">${bEsc(t)}</p>`).join(''):'<p>Sem ganho numérico imediato.</p>'}</section><section><h3>Custos e riscos</h3>${costs.length?costs.map(t=>`<p class="negative">${bEsc(t)}</p>`).join(''):'<p>Sem custo numérico imediato.</p>'}</section></div>${bMetrics([['OVR',P.ovr],['Forma',Math.round(P.form)],['Moral',Math.round(P.morale)],['Físico',Math.round(P.physical)]])}<button class="btn primary a3Continue" id="narrativeContinueBtn">${bEsc(buttonLabel)} →</button><p class="a3Caveat">A escolha e este ponto da carreira ficam no salvamento automático.</p></section></div></div>${a3Journey()}`,()=>bOnce($('narrativeContinueBtn'),onContinue));
+ bMount({kind:'consequence',stage:'Consequência da decisão',title,text,scene:bEventScene(event)},`<div class="a3Scene a3Result"><div><section class="bPanel c22ResultStory"><span class="a3Kicker">Consequência da escolha</span><h1>${bEsc(title)}</h1><p>${bEsc(text)}</p>${a3Metrics(event)}</section></div><div class="a3DecisionColumn">${a3Speaker(event)}<section class="a3Outcome"><span class="a3Kicker">Decisão registrada</span><h2>O que mudou agora</h2><div class="a3OutcomeGrid"><section><h3>Ganhos imediatos</h3>${gains.length?gains.map(t=>`<p class="positive">${bEsc(t)}</p>`).join(''):'<p>Sem ganho numérico imediato.</p>'}</section><section><h3>Custos e riscos</h3>${costs.length?costs.map(t=>`<p class="negative">${bEsc(t)}</p>`).join(''):'<p>Sem custo numérico imediato.</p>'}</section></div>${bMetrics([['OVR',P.ovr],['Forma',Math.round(P.form)],['Moral',Math.round(P.morale)],['Físico',Math.round(P.physical)]])}<button class="btn primary a3Continue" id="narrativeContinueBtn">${bEsc(buttonLabel)} →</button><p class="a3Caveat">A escolha e este ponto da carreira ficam no salvamento automático.</p></section></div></div>${a3Journey()}`,()=>bOnce($('narrativeContinueBtn'),onContinue));
 }
 // As rotas e os eventos de clique originais continuam responsáveis pela navegação.
 const a3SyncBase=bSync;
@@ -5721,11 +5724,110 @@ a3Tools.append(a3ToolsBody);bSide.append(a3Tools);
 
 
 
+/* v0.9.22 — clareza causal, seleção de retornos e fechamento factual. */
+function c22DecisionContext(event={}){
+ const injury=P.health?.active;
+ if(String(event.id||'').startsWith('recovery_'))return injury?`<p class="c22Context"><strong>Plano médico atual:</strong> ${Math.ceil(injury.remaining||0)} dias restantes de afastamento. Sem jogar durante o afastamento; retorno com carga gradual. ${injury.mode==='early'?'Antecipação escolhida: a janela de retorno mantém risco maior de recaída.':''}</p>`:'';
+ const s=P.activeSeason;if(!s?.first)return '';
+ const bonus=Math.round(P.minutesBonus||0),mult=s.secondHalfMultiplier||1;
+ const limits=c10UsageFactors(P,P.club).filter(x=>x.factor<.995).sort((a,b)=>a.factor-b.factor).slice(0,2).map(x=>x.label.toLowerCase());
+ return `<div class="c22Context"><p><strong>Ajustes de escolhas no cálculo anual:</strong> ${bonus>0?'+':''}${bonus} min · multiplicador da segunda metade ×${mult.toFixed(2)}.</p><p>${limits.length?'Na leitura atual, limitam a utilização: '+bEsc(limits.join(' e '))+'.':'A leitura atual não aponta uma limitação forte entre os fatores exibidos.'} São fatores combinados; ajustes não garantem minutos e a disponibilidade médica continua valendo.</p></div>`;
+}
+const c22PhaseNames={opening:'Início da temporada',mid:'Metade da temporada',pulse:'Momento da temporada',late:'Reta final',national:'Seleção',recovery:'Recuperação'};
+const c22LedgerBase=macro094['event-ledger'];
+macro094['event-ledger']=function(){
+ let html=c22LedgerBase.call(this);
+ for(const [phase,label] of Object.entries(c22PhaseNames))html=html.replaceAll(' · '+phase+' · ',' · '+label+' · ');
+ html=html.replaceAll('PREVISTO PARA ','ELEGÍVEL DESDE ');
+ return html.replace('<div class="c10EventFamilyBars">','<p class="c22Context">Decisões contabiliza escolhas do registro de eventos; a linha do tempo também reúne registros narrativos de outros sistemas. Retornos elegíveis aguardam uma abertura disponível; os mais antigos recebem prioridade.</p><div class="c10EventFamilyBars">');
+};
+
+// Uma demanda identificável, sem inventar partidas ou fatos de escalação.
+const c22PulseBase=c10PulseCandidates;
+c10PulseCandidates=function(){
+ const events=c22PulseBase(),people=P.club?getClubPeople(P,P.club):null;
+ const e=events.find(x=>x.id==='c10_pulse_young_voice');
+ if(e&&people?.teammate){
+  e.c22Actor={id:people.teammate.id,name:people.teammate.name,club:P.club.name};
+  e.d=`${people.teammate.name} pede que você leve a ${people.coach.name} uma demanda: explicar ao elenco os critérios para dividir os minutos na reta final. Você tem ${P.activeSeason?.first?.minutes||0} minutos nesta temporada e precisa decidir se assume essa conversa ou preserva sua preparação individual.`;
+  e.opts[0].text=`Você apresenta a demanda por critérios a ${people.coach.name}; ganha apoio do grupo e tensiona a relação com o treinador. Não há promessa de escalação.`;
+  e.opts[1].text=`Você aconselha ${people.teammate.name} a conversar diretamente com a comissão e oferece apoio sem assumir a representação.`;
+ }
+ return events;
+};
+const c22PersonBase=a3Person;
+a3Person=function(e={}){
+ if(e.c22Actor&&P.club?.name===e.c22Actor.club){const p=getClubPeople(P,P.club).teammate;if(p?.id===e.c22Actor.id)return {...p,role:'Companheiro de elenco',context:'Pede critérios claros para a divisão de minutos.'};}
+ return c22PersonBase(e);
+};
+
+// Mantém a fila existente e acrescenta identidade quando conhecida na origem.
+const c22ScheduleBase=c10ScheduleConsequence;
+c10ScheduleConsequence=function(e,o,phase){
+ c22ScheduleBase(e,o,phase);
+ const pending=P.pendingConsequences?.find(x=>!x.resolved&&x.sourceId===e.id&&x.sourceYear===(e.c10Year??P.year));
+ if(pending&&!pending.c22Origin){
+  const actor=e.c22Actor;
+  pending.c22Origin={actorId:actor?.id||null,actorName:actor?.name||null,intent:o.spaceIntent||o.intent||null};
+ }
+};
+function c22OldestDue(){return (P.pendingConsequences||[]).filter(x=>!x.resolved&&x.dueYear<=P.year).sort((a,b)=>a.dueYear-b.dueYear||a.sourceYear-b.sourceYear)[0];}
+c10DueConsequenceEvent=function(){
+ const a=c22OldestDue();if(!a)return null;
+ const same=P.club?.name===a.sourceClub,s=(P.history||[]).find(x=>x.year===a.sourceYear),origin=a.c22Origin;
+ const facts=s?` A temporada terminou com ${s.minutes} minutos, ${s.goals} gols e ${Math.round(s.physical?.days||0)} dias de indisponibilidade.`:'';
+ const presence=origin?.actorId&&same?getClubPeople(P,P.club).teammate:null;
+ const present=!!origin?.actorId&&presence?.id===origin.actorId;
+ const context=!same?' Hoje você está em outro clube; esta é uma avaliação da história, sem atribuir a conversa à comissão atual.':origin?.actorName&&!present?` ${origin.actorName} não está confirmado no contexto atual; você retoma o tema com seu ambiente de hoje.`:'';
+ const group= a.family==='carreira'?'carreira':a.family==='físico'?'físico':a.family==='relações'?'relações':a.family==='torcida'||a.family==='mídia'?'público':a.family==='seleção'?'seleção':'esportivo';
+ const option=(label,effects,text,search=false)=>({label,effects,text,c22Search:search});
+ const choices={
+  carreira:[option('Pedir ao agente uma busca por mais minutos',{agent:3,clubRel:-3},'O agente recebe prioridade de utilização no próximo mercado; depende de candidatos elegíveis.',true),option('Priorizar continuidade no projeto atual',{clubRel:3,marketBoost:-2},'Você preserva o vínculo atual e reduz a exposição ao mercado.')],
+  físico:[option('Manter carga gradual no próximo ciclo',{physical:3,minutesBonus:-100},'Você protege a preparação e aceita menor utilização projetada; o tratamento médico não é encurtado.'),option('Preparar uma busca por mais espaço',{agent:2,clubRel:-2},'A busca é esportiva; uma transferência não cura a lesão nem garante escalação.',true)],
+  relações:[option(present?`Retomar a parceria com ${presence.name}`:'Construir cooperação no elenco atual',{squad:3,minutesBonus:-80},'Você favorece o trabalho conjunto e aceita compartilhar mais utilização.'),option('Negociar meu espaço com o treinador',{coach:-2,minutesBonus:100},'Você prioriza utilização e tensiona a relação com a comissão atual.')],
+  público:[option('Explicar meu compromisso sem prometer resultados',{clubRel:3,media:2,morale:-1},'Você mantém o diálogo público e assume o desgaste da exposição.'),option('Preservar a preparação longe das entrevistas',{form:3,media:-2},'Você concentra a resposta no trabalho e reduz sua exposição.')],
+  seleção:[option('Trabalhar regularidade para o próximo ciclo',{form:3,physical:-2,selectionBoost:.03},'Você investe na preparação; a convocação continua dependendo do contexto esportivo.'),option('Priorizar disponibilidade física',{physical:3,selectionBoost:-.01},'Você protege o corpo e reduz o impulso imediato na disputa da seleção.')],
+  esportivo:[option('Negociar um plano de preparação',{form:3,minutesBonus:-80},'Você troca utilização imediata por preparação, sem garantia de protagonismo.'),option('Buscar uma alternativa de utilização',{agent:2,clubRel:-2},'Seu agente passa a procurar uma alternativa elegível com mais minutos.',true)]
+ };
+ return normalizeNarrativeEvent({id:`c10_follow_${a.id}`,family:a.family,follow:true,consequenceId:a.id,t:a.title,d:`Em ${a.sourceYear}, no ${a.sourceClub||'clube da época'}, diante de “${a.originalTitle}”, você escolheu “${a.originalChoice}”.${facts}${context} Como esse registro orienta sua próxima decisão?`,c22Actor:present?{id:presence.id,name:presence.name,club:P.club.name}:null,opts:choices[group]});
+};
+// Um retorno antigo usa uma abertura já existente; não acrescenta mais uma tela.
+const c22OpeningBase=makeEvent;
+makeEvent=function(){
+ const due=c22OldestDue();
+ if(due&&P.year-due.dueYear>=1)return c10RecordPresented(c10DueConsequenceEvent(),'opening');
+ return c22OpeningBase();
+};
+const c22TrackBase=c10TrackChoice;
+c10TrackChoice=function(e,o,phase){
+ if(!e||!o)return;
+ const already=P.eventLedger?.some(x=>x.key===c10EventPhaseKey(phase,e));
+ c22TrackBase(e,o,phase);
+ if(!already&&o.c22Search)c10CareerSearch({id:`return_${e.consequenceId}`,choice:o.label,agentName:P.agentPerson?.name});
+};
+
+function c22SeasonClosure(s){
+ if(!s)return '';
+ const threads=(P.careerThreads||[]).filter(a=>a.year===s.year&&a.club===s.club);
+ const club=threads.find(a=>a.type==='club'),days=Math.round(s.physical?.days||0);
+ const decisions=[];
+ if(club?.choice)decisions.push(`Você escolheu “${club.choice}”.`);
+ if(days)decisions.push(`A temporada registrou ${days} dias de indisponibilidade.`);
+ const movement=(P.world?.movements||[]).find(x=>x.year===s.year&&x.club===s.club&&/^(Acesso|Rebaixamento):/.test(x.text));
+ if(movement)decisions.push(`Resultado coletivo registrado: ${movement.text}`);
+ decisions.push(`No ${s.club}, você somou ${s.minutes} minutos, ${s.goals} gols e ${s.assists} assistências.`);
+ const unresolved=threads.filter(a=>a.status!=='resolved').map(a=>a.title);
+ return `<section id="c22SeasonClosure" class="bPanel c22Closure"><span class="a3Kicker">O capítulo que você construiu · ${bEsc(s.year)}</span><h2>${movement&&movement.text.startsWith('Acesso')?'Uma campanha de acesso':movement?'Uma mudança de divisão':'O que fica desta temporada'}</h2><p>${bEsc(decisions.join(' '))}</p><p>${unresolved.length?'Continuam em acompanhamento: '+bEsc(unresolved.join(' e '))+'. Os retornos vão considerar os fatos registrados.':'O próximo passo é comparar continuidade e propostas com seu papel e sua disponibilidade atuais.'}</p><small>Escolhas individuais e resultado coletivo são registros distintos; este balanço não atribui o resultado do clube a uma única decisão.</small></section>`;
+}
+const c22SummaryBase=showSeasonSummary;
+showSeasonSummary=function(s){const result=c22SummaryBase(s);if(!diagnosticMode091)$('mainScreen').insertAdjacentHTML('afterbegin',c22SeasonClosure(s));return result;};
+
+
 
 })();
 //# sourceURL=carreira10-engine.js
 </script>
-<div class="c10BuildStamp" hidden>Carreira 10 v0.9.21 · Identidade de Clube · base 2023.1 · equilíbrio global 2 · save schema 73</div>
+<div class="c10BuildStamp" hidden>Carreira 10 v0.9.22 · Escolhas com Continuidade · base 2023.1 · equilíbrio global 2 · save schema 73</div>
 </body>
 </html>
 
