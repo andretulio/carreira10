@@ -5758,6 +5758,7 @@ c10PulseCandidates=function(){
 const c22PersonBase=a3Person;
 a3Person=function(e={}){
  if(e.c22Actor&&P.club?.name===e.c22Actor.club){const p=getClubPeople(P,P.club).teammate;if(p?.id===e.c22Actor.id)return {...p,role:'Companheiro de elenco',context:'Pede critérios claros para a divisão de minutos.'};}
+ if(e.consequenceId)return {name:'Memória da carreira',role:'Retorno de uma decisão',group:true,context:'Você revisita os fatos registrados e escolhe como seguir no contexto atual.'};
  return c22PersonBase(e);
 };
 
