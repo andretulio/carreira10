@@ -449,6 +449,12 @@ body.c10FontLarge{--c10-body:15px;--c10-detail:14px;--c10-caption:12px;--c10-lea
 .bGame.c10FontLarge .a3Choose{font-size:0}.bGame.c10FontLarge .a3Choice p{line-height:1.6}.bGame.c10FontLarge .a3Hero .a3StoryText{line-height:1.65}
 
 
+.a3FullContext{margin-top:15px;font-size:12px;color:#c2cfdb}.a3FullContext summary{cursor:pointer}.a3FullContext p{font-size:13px;line-height:1.6}.a3Choice{padding-top:16px;padding-bottom:16px}@media(min-width:1400px){.a3Choice{padding-top:17px;padding-bottom:17px}.a3DecisionHeading{margin-top:18px}.a3HeroCopy{padding-top:300px}}
+
+
+.a3PlayerArt{left:50%;right:auto;width:100%;max-width:640px;transform:translateX(-50%);background-position-y:-80px!important;mask-image:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent)}
+
+
 </style>
 </head>
 <body>
@@ -4585,7 +4591,7 @@ const bRestore=restoreWorldCheckpoint;restoreWorldCheckpoint=async function(){aw
 // Legacy auxiliary screens keep their handlers, but carry an explicit pending stage.
 for(const [get,set,stage] of [[()=>showContractTalk,fn=>showContractTalk=fn,'Conversa com agente'],[()=>showCareerDecision,fn=>showCareerDecision=fn,'Futuro da carreira'],[()=>showFarewell,fn=>showFarewell=fn,'Despedida'],[()=>showMidseasonMarket,fn=>showMidseasonMarket=fn,'Mercado']]){if(stage==='Mercado')continue;const original=get();set(function(...args){const result=original.apply(this,args);if(!diagnosticMode091){bUi.pending={kind:'aux',stage,title:stage,text:'Um novo capítulo da sua trajetória.',scene:'stadium'};bRoute('flow')}return result})}
 // Visibility is the only observed property; no post-render decoration of screens.
-new MutationObserver(bSync).observe($('game'),{attributes:true,attributeFilter:['class']});
+new MutationObserver(()=>bSync()).observe($('game'),{attributes:true,attributeFilter:['class']});
 
 const bEngineRetire=retire;retire=function(){const result=bEngineRetire();if(!diagnosticMode091){bUi.pending={kind:"retired",stage:"Carreira encerrada",title:"Sua história deixou um legado",text:P.name+" · "+P.games+" jogos · "+P.goals+" gols · "+P.trophies+" títulos",scene:"stadium"};bRoute("flow")}return result};
 
@@ -5644,7 +5650,10 @@ function a3Metrics(event){
  return `<dl class="a3Metrics">${metrics.map(([label,value])=>`<div><dt>${bEsc(label)}</dt><dd>${bEsc(value)}</dd></div>`).join('')}</dl>${thread?.type==='club'||space||P.activeSeason?'<p class="a3Caveat">Projeções de minutos, não garantias de escalação.</p>':''}`;
 }
 function a3Hero({title,text,stage,event,action=''}){
- return `<section class="a3Hero"><div class="a3PlayerArt" style="background-image:url('${A3_ART.player}');background-position:${a3AgePosition()} top" aria-hidden="true"></div><div class="a3HeroCopy"><span class="a3Kicker">${bEsc(stage||'Sua história em campo')}</span><h1>${bEsc(title)}</h1><p class="a3StoryText">${bEsc(text||'')}</p>${action}${a3Metrics(event)}</div></section>`;
+ const thread=event?.c10Thread?c10Thread(event.c10Thread.id):null;
+ const compact=thread?.type==='club'&&event.c10Thread.stage==='start'&&text===event.d;
+ const short=compact?(thread.moved?`Você escolheu ${thread.from} → ${thread.to}. Uma nova camisa abre possibilidades e deixa vínculos para trás. Como você quer viver essa mudança?`:`Você escolheu continuar no ${thread.club}. Preservar o vínculo também é uma decisão sobre o futuro da sua carreira.`):text;
+ return `<section class="a3Hero"><div class="a3PlayerArt" style="background-image:url('${A3_ART.player}');background-position:${a3AgePosition()} top" aria-hidden="true"></div><div class="a3HeroCopy"><span class="a3Kicker">${bEsc(stage||'Sua história em campo')}</span><h1>${bEsc(title)}</h1><p class="a3StoryText">${bEsc(short||'')}</p>${action}${a3Metrics(event)}${compact?`<details class="a3FullContext"><summary>Ver contexto completo</summary><p>${bEsc(text)}</p></details>`:''}</div></section>`;
 }
 function a3Journey(){
  const phase=P.savedFlow?.phase||'opening',stage=P.activeSeason?.first?(phase==='late'?3:2):P.lastSeason&&bUi.pending?.kind==='summary'?4:1;
@@ -5660,7 +5669,7 @@ function a3OptionDetails(option){
 function a3RenderEvent(event,kind,onChoose,extra=''){
  const title=event.t||event.title||'Sua próxima escolha',text=event.d||event.desc||'',scene=bEventScene(event);
  const details=extra?`<details class="a3SceneDetails"><summary>Ver temporada, projeções e contexto</summary>${extra}</details>`:'';
- const markup=`<div class="a3Scene"><div class="a3StoryColumn">${a3Hero({title,text,stage:kind,event})}${details}</div><div class="a3DecisionColumn">${a3Speaker(event)}<div class="a3DecisionHeading"><h2>Como você quer seguir?</h2><p>Compare possibilidades e custos antes de escolher.</p></div><div class="bChoices a3Choices">${event.opts.map((o,i)=>`<article class="a3Choice"><div class="a3ChoiceNumber" aria-hidden="true">${String(i+1).padStart(2,'0')}</div><div class="a3ChoiceBody"><h3>${bEsc(o.label)}</h3><p>${bEsc(o.text||'')}</p>${a3OptionDetails(o)}<button type="button" class="a3Choose" data-b-choice="${i}" aria-label="Escolher: ${bEsc(o.label)}">Escolher esta opção <span aria-hidden="true">→</span></button></div></article>`).join('')}</div></div></div>${a3Journey()}`;
+ const markup=`<div class="a3Scene"><div class="a3StoryColumn">${a3Hero({title,text,stage:kind,event})}${details}</div><div class="a3DecisionColumn">${a3Speaker(event)}<div class="a3DecisionHeading"><h2>Como você quer seguir?</h2><p>Compare possibilidades e custos antes de escolher.</p></div><div class="bChoices a3Choices">${event.opts.map((o,i)=>`<article class="a3Choice"><div class="a3ChoiceNumber" aria-hidden="true">${String(i+1).padStart(2,'0')}</div><div class="a3ChoiceBody"><h3>${bEsc(o.label)}</h3><p>${bEsc(o.text||'')}</p>${a3OptionDetails(o)}<button type="button" class="a3Choose" data-b-choice="${i}" aria-label="Escolher: ${bEsc(o.label)}"><span aria-hidden="true">→</span></button></div></article>`).join('')}</div></div></div>${a3Journey()}`;
  bMount({kind:'event',stage:kind,title,text,scene},markup,()=>{$('mainScreen').querySelectorAll('[data-b-choice]').forEach(button=>bOnce(button,()=>{
   const all=$('mainScreen').querySelectorAll('[data-b-choice]');all.forEach(b=>b.disabled=true);
   try{onChoose(Number(button.dataset.bChoice));}catch(error){all.forEach(b=>b.disabled=false);throw error;}
@@ -5699,10 +5708,12 @@ a3Tools.append(a3ToolsBody);bSide.append(a3Tools);
 
 
 
+
 })();
 //# sourceURL=carreira10-engine.js
 </script>
 <div class="c10BuildStamp" hidden>Carreira 10 v0.9.21 · Identidade de Clube · base 2023.1 · equilíbrio global 2 · save schema 73</div>
 </body>
 </html>
+
 
