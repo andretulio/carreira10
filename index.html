@@ -458,6 +458,9 @@ body.c10FontLarge{--c10-body:15px;--c10-detail:14px;--c10-caption:12px;--c10-lea
 .bGame .a3Hero h1,.bGame .bLogo,.a3ChoiceNumber{font-weight:400}.bGame .bNav::-webkit-scrollbar{height:3px}.bGame .bNav::-webkit-scrollbar-track{background:#101c29}.bGame .bNav::-webkit-scrollbar-thumb{background:#4c5e70;border-radius:4px}
 
 
+.bGame .bHero h1{font-weight:400}
+
+
 </style>
 </head>
 <body>
@@ -5639,6 +5642,9 @@ function a3Person(event={}){
  if(event.c10Mentor){const person=clubSquad(P,P.club).find(p=>p.id===event.c10Mentor.personId);if(person)return {...person,role:'Jovem do elenco',context:`${person.age} anos · ${person.pos||'Companheiro de clube'}`};}
  const thread=event.c10Thread?c10Thread(event.c10Thread.id):null;
  if(thread?.type==='mentor'){const person=clubSquad(P,P.club).find(p=>p.id===thread.personId);return person?{...person,role:'Companheiro de elenco',context:'Um capítulo compartilhado no vestiário.'}:{id:thread.personId,name:thread.personName,role:'Memória do vestiário',group:true,context:'O contexto de convivência faz parte deste retorno.'};}
+ const copy=String(event.t||event.title||'')+' '+String(event.d||event.desc||'');
+ const named=[{p:people?.coach,role:'Seu treinador'},{p:people?.teammate,role:people?.teammate?.role||'Companheiro de elenco'},{p:P.agentPerson,role:'Seu agente'}].filter(x=>x.p?.name&&copy.includes(x.p.name));
+ if(named.length===1)return {...named[0].p,role:named[0].role,context:'Uma pessoa presente no contexto desta escolha.'};
  if(/rival/.test(id)){const p=P.club?primarySquadRival(P,P.club):null;if(p)return {...p,role:'Disputa por posição',context:'A convivência e a concorrência também entram na decisão.'};}
  if(/coach|bench|space|treinador/.test(id)||family==='esportivo')return people?{...people.coach,role:'Seu treinador',context:`${people.coach.style} · Confiança atual: ${Math.round(P.coach)}/100`}:{name:'Seu próximo passo',role:'Carreira',group:true};
  if(family==='torcida')return {name:`Torcida do ${P.club?.name||'clube'}`,role:'Identificação e vínculo',group:true,context:'Sua relação com a arquibancada também deixa marcas.'};
