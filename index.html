@@ -455,6 +455,9 @@ body.c10FontLarge{--c10-body:15px;--c10-detail:14px;--c10-caption:12px;--c10-lea
 .a3PlayerArt{left:50%;right:auto;width:100%;max-width:640px;transform:translateX(-50%);background-position-y:-80px!important;mask-image:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent)}
 
 
+.bGame .a3Hero h1,.bGame .bLogo,.a3ChoiceNumber{font-weight:400}.bGame .bNav::-webkit-scrollbar{height:3px}.bGame .bNav::-webkit-scrollbar-track{background:#101c29}.bGame .bNav::-webkit-scrollbar-thumb{background:#4c5e70;border-radius:4px}
+
+
 </style>
 </head>
 <body>
@@ -5627,19 +5630,23 @@ function a3Hash(value){return [...String(value||'')].reduce((n,c)=>(n*31+c.charC
 function a3Portrait(person){const i=a3Hash(person.id||person.name)%4;return `<span class="a3Portrait" style="background-image:url('${A3_ART.staff}');background-position:${i%2?100:0}% ${i>1?100:0}%" aria-hidden="true" title="Retrato ilustrativo"></span>`}
 function a3Person(event={}){
  const id=String(event.id||''),family=event.family||'',people=P.club?getClubPeople(P,P.club):null;
- if(id.startsWith('recovery_')||event.c10Thread&&c10Thread(event.c10Thread.id)?.type==='recovery')return {name:'Departamento médico',role:'Recuperação e disponibilidade',group:true,context:'Considere seu prazo, sua condição e os custos de cada caminho.'};
+ if(id.startsWith('recovery_')||family==='físico'||event.c10Thread&&c10Thread(event.c10Thread.id)?.type==='recovery')return {name:'Departamento médico',role:'Recuperação e disponibilidade',group:true,context:'Considere seu prazo, sua condição e os custos de cada caminho.'};
  if(id.startsWith('selection_')||family==='seleção')return {name:`Seleção de ${P.nation}`,role:'Carreira internacional',group:true,context:'Seu momento esportivo e sua postura fazem parte deste capítulo.'};
  if(event.c10Thread?.stage==='reunion'){
   const person=people?.coach?.id===event.c10Thread.actorId?people.coach:clubSquad(P,P.club).find(p=>p.id===event.c10Thread.actorId);
   if(person)return {...person,role:person.id===people.coach.id?'Seu treinador':'Companheiro de elenco',context:'Uma pessoa que já faz parte da sua história.'};
  }
+ if(event.c10Mentor){const person=clubSquad(P,P.club).find(p=>p.id===event.c10Mentor.personId);if(person)return {...person,role:'Jovem do elenco',context:`${person.age} anos · ${person.pos||'Companheiro de clube'}`};}
+ const thread=event.c10Thread?c10Thread(event.c10Thread.id):null;
+ if(thread?.type==='mentor'){const person=clubSquad(P,P.club).find(p=>p.id===thread.personId);return person?{...person,role:'Companheiro de elenco',context:'Um capítulo compartilhado no vestiário.'}:{id:thread.personId,name:thread.personName,role:'Memória do vestiário',group:true,context:'O contexto de convivência faz parte deste retorno.'};}
  if(/rival/.test(id)){const p=P.club?primarySquadRival(P,P.club):null;if(p)return {...p,role:'Disputa por posição',context:'A convivência e a concorrência também entram na decisão.'};}
  if(/coach|bench|space|treinador/.test(id)||family==='esportivo')return people?{...people.coach,role:'Seu treinador',context:`${people.coach.style} · Confiança atual: ${Math.round(P.coach)}/100`}:{name:'Seu próximo passo',role:'Carreira',group:true};
  if(family==='torcida')return {name:`Torcida do ${P.club?.name||'clube'}`,role:'Identificação e vínculo',group:true,context:'Sua relação com a arquibancada também deixa marcas.'};
  if(family==='mídia')return {name:'Repercussão pública',role:'Imprensa e exposição',group:true,context:'Seu posicionamento muda a forma como a carreira é percebida.'};
+ if(family==='relações')return {name:P.club?.name||'Seu ambiente',role:'Vínculos no clube',group:true,context:'O ambiente e as relações também fazem parte da sua trajetória.'};
  const agent=P.agentPerson;return agent?{...agent,role:'Seu agente',context:`Relação atual: ${relationshipLabel(P.agent||50)}`}:{name:P.club?.name||'Sua carreira',role:'Você decide o próximo capítulo',group:true};
 }
-function a3Speaker(event){const p=a3Person(event);return `<section class="a3Speaker" aria-label="Contexto da conversa">${p.group?`<span class="a3Group" aria-hidden="true">${bIcon('story')}</span>`:a3Portrait(p)}<div><h2>${bEsc(p.name)}</h2><span>${bEsc(p.role)}</span>${p.context?`<p>${bEsc(p.context)}</p>`:''}</div></section>`}
+function a3Speaker(event){const p=a3Person(event),initials=String(p.name).split(/\s+/).slice(0,2).map(x=>x[0]).join('');return `<section class="a3Speaker" aria-label="Contexto da conversa">${p.group||p.pos||p.age<30?`<span class="a3Group" aria-hidden="true">${p.group?bIcon('story'):bEsc(initials)}</span>`:a3Portrait(p)}<div><h2>${bEsc(p.name)}</h2><span>${bEsc(p.role)}</span>${p.context?`<p>${bEsc(p.context)}</p>`:''}</div></section>`}
 function a3Metrics(event){
  const thread=event?.c10Thread?c10Thread(event.c10Thread.id):null;
  const space=event?.c10Space;
