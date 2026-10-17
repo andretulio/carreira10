@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Carreira 10 — v0.9.22 · Escolhas com Continuidade</title>
+<title>Carreira 10 — v0.9.23 · O jogo na sua tela</title>
 <style>
 :root{
   --bg:#090e0a;--p:#101812;--p2:#151f17;--p3:#0d140f;--ln:#29372c;--tx:#f2f5f2;--mu:#9fad9f;
@@ -463,13 +463,28 @@ body.c10FontLarge{--c10-body:15px;--c10-detail:14px;--c10-caption:12px;--c10-lea
 
 .c22Context{font-size:13px;line-height:1.6;color:#becbd5;margin:14px 0;padding:12px 14px;border-left:3px solid var(--a3-accent,#ff872d);background:#101c26;border-radius:4px}.c22Context p{margin:0 0 6px}.c22Context p:last-child{margin:0}.bGame .a3Result{grid-template-columns:minmax(0,.85fr) minmax(0,1.15fr);align-items:start}.bGame .c22ResultStory{padding:24px;background:#101c26}.bGame .c22ResultStory h1{font-size:clamp(26px,3vw,40px);line-height:1.12;margin:12px 0 18px}.c22ResultStory .a3Metrics{margin-top:20px}.c22Closure{margin:0 0 18px;padding:20px 24px}.c22Closure p{line-height:1.65}.c22Closure small{color:#aebcc7;line-height:1.5;display:block}.bGame .a3Result .a3Metrics{grid-template-columns:repeat(3,minmax(0,1fr))}.bGame .a3Result .a3Metrics dd{overflow-wrap:anywhere}@media(max-width:1100px){.bGame .a3Result{grid-template-columns:1fr}}@media(max-width:700px){.bGame .c22ResultStory,.c22Closure{padding:18px}.c22Context{font-size:12px}}
 
+/* A composição acompanha a altura, sem escalar a página inteira. */
+.c23Mode{background:transparent;border:1px solid #42515f;border-radius:5px;padding:7px 10px;color:#cad5df;font-size:11px;cursor:pointer;white-space:nowrap}.c23NationFlag{font-size:32px;line-height:1;display:grid;place-items:center;min-width:40px}.c23National{--a3-bg:var(--c23-bg);--a3-panel:var(--c23-panel);background:var(--c23-bg);background-image:radial-gradient(ellipse at 90% 0%,color-mix(in srgb,var(--c23-second) 13%,transparent),transparent 60%)}.c23National .bSidebar,.c23National .a3Hero{background:var(--c23-bg)}.c23National .a3Hero:after{background:linear-gradient(0deg,var(--c23-bg) 0%,color-mix(in srgb,var(--c23-bg) 92%,transparent) 32%,transparent 90%)}.c23National .a3Speaker,.c23National .a3Choice,.c23National .a3Outcome,.c23National .bPanel,.c23National .bMetric,.c23National .c10InternationalHero,.c23National .bMacroMetric,.c23National .c23ResultStory{background:var(--c23-panel);border-color:color-mix(in srgb,var(--c23-second) 38%,#233d35)}.c23National .a3Choice{border-left-color:var(--a3-accent)}.c23National .bHeader{border-bottom-color:var(--c23-second)}.c23National .c10NationMark,.c23National .c10NationMark span{background:var(--a3-accent);color:#102017}.c23National .a3Hero h1{color:#fff8db}.c23National .c22Context{background:var(--c23-panel);border-left-color:var(--c23-second)}
+.c23Dialog{width:min(1200px,94vw);max-width:94vw;height:min(820px,92dvh);max-height:92dvh;padding:18px 22px;border:1px solid #4c626d;border-radius:12px;background:#0d1a27;color:#edf3f7}.c23Dialog::backdrop{background:#02070dce;backdrop-filter:blur(5px)}.c23Dialog>header{display:flex;align-items:center;justify-content:space-between;gap:20px;margin-bottom:14px}.c23Dialog>header h2{font-size:22px;margin:0}.c23DialogContent{min-height:0}.c23Dialog .c23DeckBody{height:var(--c23-stage-height);max-height:calc(92dvh - 130px)}.c23Dialog .bPanel{background:#132536;color:#e9f0f6}.c23Pager{display:flex;align-items:center;gap:12px;min-height:42px;padding:8px 0 0;border-top:1px solid #344655;margin-top:8px}.c23Pager select{min-width:0;flex:1;background:#132333;color:#e8eff5;border:1px solid #3d5164;padding:8px;border-radius:5px}.c23Pager>span{font-size:12px;color:#aebdcc;white-space:nowrap}.c23Pager .btn{min-width:90px;padding:8px 12px;font-size:12px}.c23Pager .btn:disabled{opacity:.35}.c23Page[hidden]{display:none!important}.c23Page{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px 16px;align-content:start;align-items:start}.c23Page>*{min-width:0;margin:0!important}.c23Measuring{display:block!important}.c23Measuring>*{position:absolute;visibility:hidden;top:0;left:0}.c23DeckBody{position:relative;min-height:0}.c23Deck table{width:100%;border-collapse:collapse}.c23Deck td,.c23Deck th{padding:8px 10px;font-size:12px;text-align:left;border-bottom:1px solid #304250}.c23Deck .bHero{min-height:0;padding:20px;height:auto}.c23Deck .bHero h1{font-size:28px;margin:8px 0}.c23Deck .bHero p{font-size:13px;line-height:1.5}.c23Deck .a3Hero{min-height:0;height:250px}.c23Deck .a3HeroCopy{padding:58px 20px 16px}.c23Deck .a3Hero h1{font-size:30px}.c23Deck .a3Hero .a3StoryText{font-size:13px}.c23Deck .a3Metrics{margin-top:12px}.c23Deck .bPanel{padding:16px}.c23Deck .bPanel h2{font-size:19px;margin:4px 0 12px}.c23Deck .bPanel p{font-size:13px;line-height:1.5}.c23Deck .bMetrics{margin:12px 0;gap:10px}.c23Deck .bMetric{padding:12px}.c23Deck .bMetric b{font-size:22px}.c23Deck .bOffer{padding:14px}.c23Deck .bOfferFields{margin:12px 0}.c23Deck .bOfferFields>div{padding:5px 0}.c23Deck .c10EssentialGrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr))}.c23Deck .c10InternationalHero{padding:18px}.c23Deck .c10InternationalHero h1{font-size:28px}.c23MacroHost>.bHero{min-height:0;padding:12px 18px;margin:0 0 10px}.c23MacroHost>.bHero h1{font-size:26px;line-height:1.15;margin:6px 0}.c23MacroHost>.bHero p{margin:0;font-size:12px}.c23MacroHost>.bMetrics{margin:10px 0}.c23MacroHost>.bMetrics .bMetric{padding:10px 14px}.c23MacroHost>.bMetrics .bMetric b{font-size:23px}.c23MacroHost .bMacroContent{margin-top:10px}
+@media(min-width:1024px) and (min-height:620px){
+ body.c23Desktop{height:100dvh;overflow:hidden}.c23Desktop .bSidebar{height:52px;min-height:52px;padding:0 22px;gap:24px}.c23Desktop .bLogo{font-size:25px}.c23Desktop .bNav{gap:24px}.c23Desktop .bNav button{font-size:13px}.c23Desktop .bHeader{min-height:74px;height:74px;padding:10px 22px;max-width:none;gap:24px}.c23Desktop .a3Ovr{width:47px;height:47px}.c23Desktop .a3Ovr b{font-size:22px}.c23Desktop #game{max-width:none;padding:0 22px 8px}.c23Desktop #careerCenter{margin-top:10px}.c23Desktop #bHome{padding-top:12px}.c23Desktop .careerCenterHead{margin:0 0 8px}.c23Desktop .careerTabs{margin:8px 0;gap:8px}.c23Desktop .careerTab{font-size:12px;padding:8px 14px}.c23Desktop .visualSettings{display:none}.c23Desktop .c23DeckBody{height:var(--c23-stage-height);}.c23Desktop .c23Flow .a3Scene{height:calc(var(--c23-height) - 44px);min-height:0;margin-top:10px;gap:22px;grid-template-columns:minmax(0,.98fr) minmax(0,1.02fr)}.c23Desktop .c23Flow .a3StoryColumn{display:flex;flex-direction:column;min-height:0}.c23Desktop .c23Flow .a3Hero{min-height:0;height:100%;flex:1}.c23Desktop .c23Flow .a3HeroCopy{padding:clamp(85px,17vh,220px) 22px 16px}.c23Desktop .c23Flow .a3Hero h1{font-size:clamp(27px,2.5vw,45px);line-height:1.07;margin:9px 0 12px}.c23Desktop .c23Flow .a3Hero .a3StoryText{font-size:14px;line-height:1.5}.c23Desktop .c23Flow .a3PlayerArt{max-width:680px;background-position-y:-100px!important}.c23Desktop .c23Flow .a3Metrics{margin-top:16px;gap:12px}.c23Desktop .c23Flow .a3Metrics dt{font-size:10px}.c23Desktop .c23Flow .a3Metrics dd{font-size:20px}.c23Desktop .c23Flow .a3Caveat{margin:6px 0 0;font-size:10px!important}.c23Desktop .c23Flow .c22Context{font-size:12px;line-height:1.45;padding:8px 12px;margin:10px 0 0}.c23Desktop .c23Flow .c22Context p{margin:0}.c23Desktop .c23Flow .c22Context summary{cursor:pointer;margin-top:6px;color:#dce8ef}.c23Desktop .c23Flow .a3SceneDetails{flex:none;padding:9px 12px;margin-top:8px}.c23Desktop .c23Flow .a3DecisionColumn{display:flex;flex-direction:column;gap:0;min-height:0}.c23Desktop .c23Flow .a3Speaker{min-height:68px;padding:10px 14px;gap:14px}.c23Desktop .c23Flow .a3Portrait{height:52px;width:52px}.c23Desktop .c23Flow .a3Group{height:42px;width:42px}.c23Desktop .c23Flow .a3Speaker h2{font-size:19px;margin:0 0 3px}.c23Desktop .c23Flow .a3Speaker p{margin-top:4px;font-size:11px!important}.c23Desktop .c23Flow .a3DecisionHeading{margin:12px 0 10px}.c23Desktop .c23Flow .a3DecisionHeading h2{font-size:24px;margin:0 0 4px}.c23Desktop .c23Flow .a3DecisionHeading p{font-size:11px}.c23Desktop .c23Flow .a3Choices{flex:1;grid-template-rows:repeat(3,minmax(min-content,1fr));gap:10px;min-height:0}.c23Desktop .c23Flow .a3Choice{padding:12px 64px 12px 15px;gap:10px;align-items:center}.c23Desktop .c23Flow .a3ChoiceNumber{font-size:24px}.c23Desktop .c23Flow .a3Choice h3{font-size:18px;margin:0 0 5px}.c23Desktop .c23Flow .a3Choice p{font-size:12px;line-height:1.4;margin:0 0 8px}.c23Desktop .c23Flow .a3Effects{padding-top:7px;gap:3px 7px}.c23Desktop .c23Flow .a3Effects>strong{display:none}.c23Desktop .c23Flow .a3Effects .bEffect{font-size:12px}.c23Desktop .c23Flow .a3Effects p{font-size:11px;margin:0}.c23Desktop .c23Flow .a3Choose{right:12px;top:12px}.c23Desktop .c23Flow .a3Journey{margin:8px 0 0;padding:8px 0;gap:28px}.c23Desktop .c23Flow .a3Journey i{width:20px;height:20px}.c23Desktop .c23Flow .a3Journey>span{font-size:10px}.c23Desktop .c23Flow .a3Outcome{padding:20px;margin-top:14px}.c23Desktop .c23Flow .a3Outcome h2{font-size:25px;margin:8px 0 16px}.c23Desktop .c23Flow .a3Outcome .bMetrics{margin-top:15px}.c23Desktop .c23Flow .a3Continue{margin-top:14px;padding:12px!important}.c23Desktop .c23Flow .c22ResultStory{padding:22px}.c23Desktop .c23Flow .c22ResultStory h1{font-size:32px}.c23Desktop .c23Flow .a3Result{align-items:start}.c23Desktop .c23Flow .a3Result>div{min-height:0}.c23Desktop .bMacroHead{margin-bottom:10px}
+ @media(max-height:800px){.c23Desktop .c23Flow .a3HeroCopy{padding-top:60px}.c23Desktop .c23Flow .a3Hero h1{font-size:30px}.c23Desktop .c23Flow .a3Speaker p{display:none}.c23Desktop .c23Flow .a3Choice{padding-top:9px;padding-bottom:9px}.c23Desktop .c23Flow .a3Metrics{margin-top:12px}.c23Desktop .c23Flow .a3Hero .a3StoryText{font-size:13px}.c23Desktop .c23Flow .a3OutcomeGrid p{font-size:12px}.c23Desktop .c23Flow .a3Outcome h2{margin-bottom:8px}}
+}
+.bGame:not(.c23Desktop) .c23Page[hidden]{display:grid!important}.bGame:not(.c23Desktop) .c23DeckBody{height:auto!important}.bGame:not(.c23Desktop) .c23Pager{display:none}.bGame:not(.c23Desktop) .c23Page{margin-bottom:14px}@media(max-width:1023px){.c23Page{grid-template-columns:1fr}.c23Mode{display:none}.c23Dialog{height:92dvh;overflow:auto}.c23Pager select{font-size:11px}.c23Page>*{grid-column:auto!important}}
+.c23Flag{display:inline-block;width:46px;height:30px;position:relative;flex:none;border-radius:3px;overflow:hidden;box-shadow:0 0 0 1px #ffffff30}.c23Flag-br{background:#18844b}.c23Flag-br:before{content:'';position:absolute;width:22px;height:22px;background:#ffe054;transform:rotate(45deg);left:12px;top:4px}.c23Flag-br:after{content:'';position:absolute;width:14px;height:14px;border-radius:50%;background:#235398;left:16px;top:8px}.c23Flag-ar{background:linear-gradient(#8bd3f0 0 33%,#fff 33% 66%,#8bd3f0 66%)}.c23Flag-ar:after{content:'';position:absolute;width:7px;height:7px;background:#dba93a;border-radius:50%;left:20px;top:12px}.c23Flag-pt{background:linear-gradient(90deg,#187148 0 40%,#db3841 40%)}.c23Flag-pt:after{content:'';position:absolute;width:10px;height:14px;border:2px solid #f8d65a;background:#fff;border-radius:4px;left:14px;top:7px}.c23Flag-es{background:linear-gradient(#c72e3e 0 25%,#ffd85d 25% 75%,#c72e3e 75%)}.c23Flag-es:after{content:'';position:absolute;width:7px;height:10px;background:#bd3340;left:12px;top:10px;border:1px solid #fff8}
+.c23Desktop #careerCenterTitle{font-size:20px;margin:3px 0}.c23Desktop #careerCenterSub{font-size:11px;margin:3px 0}.c23Desktop .c23MacroHost>.bMetrics .bMetric{padding:7px 12px}.c23Desktop .c23MacroHost>.bMetrics .bMetric b{font-size:21px}.c23Desktop .c23MacroHost>.bHero{padding:9px 16px}.c23Desktop .c23MacroHost>.bHero h1{font-size:23px;margin:5px 0}
+.c23Desktop .a3ToolsBody .visualSettings{display:block;padding:8px 0}.c23Desktop.c10FontLarge .c23Flow .a3Hero .a3StoryText{font-size:16px}.c23Desktop.c10FontLarge .c23Flow .a3Choice p{font-size:15px}.c23Desktop.c10FontLarge .c23Flow .a3Choice h3{font-size:21px}.c23Desktop.c10FontLarge .c23Flow .a3Effects .bEffect{font-size:13px}.c23Extended{overflow:auto!important;height:auto!important}.c23Extended .c23Flow .a3Scene{height:auto;min-height:calc(100dvh - 190px)}.c23Extended .c23Flow .a3Hero{height:auto}.c23Extended .c23Flow .a3Choices{grid-template-rows:none}
+@media(min-width:1024px) and (min-height:620px){body:not(.bGame) .wrap{max-width:1500px;padding:12px 22px}body:not(.bGame) #setup.c10Setup{padding:18px 22px;margin-top:8px}body:not(.bGame) #setup>h1{font-size:30px;line-height:1.15;margin:7px 0}body:not(.bGame) #setup>p{font-size:13px;line-height:1.5;margin:7px 0}body:not(.bGame) #setup>.section{margin:0;font-size:10px}body:not(.bGame) #setup .c10StepRail{margin:12px 0;padding:0}body:not(.bGame) #setup .c10StepRail>div{padding:10px;font-size:10px}body:not(.bGame) #setup .c10SetupGrid{gap:14px;margin:12px 0}body:not(.bGame) #setup .c10SetupGrid>div{padding:14px 18px}body:not(.bGame) #setup .c10SetupGrid h2{font-size:23px;margin:6px 0}body:not(.bGame) #setup .c10SetupGrid p{font-size:12px;margin:6px 0;line-height:1.4}body:not(.bGame) #setup .form{padding:13px;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin:12px 0}body:not(.bGame) #setup .form input,body:not(.bGame) #setup .form select{padding:10px;font-size:13px}body:not(.bGame) #setup .actions{gap:8px;margin:12px 0}body:not(.bGame) #setup .actions .btn{padding:9px 12px;font-size:12px}body:not(.bGame) #setup>.small{font-size:10px;line-height:1.45;margin-top:6px}}
+.c23Desktop .careerTop{display:flex;align-items:center;justify-content:space-between;gap:20px;padding:6px 0}.c23Desktop .careerTopRow{margin:0;flex:none}.c23Desktop .careerTop .careerTabs{margin:0;justify-content:flex-end}.c23Desktop .c23Deck .c10FactorList{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.c23Desktop .c23Deck .c10FactorList>div{padding:0;margin:0}.c23Desktop .c23Deck .c10FactorList p{margin:0 0 5px;font-size:12px}.c23Desktop .c23MacroHost>.bHero{min-height:0!important}.c23Desktop .c23Deck .c10FactorList span{font-size:11px}
+.c23Desktop .c23PinnedActions{display:flex!important;align-items:center;flex-wrap:wrap;gap:8px;padding:6px 0!important;margin:6px 0 10px!important;border:0;background:transparent}.c23Desktop .c23PinnedActions .btn{font-size:12px;padding:9px 14px}.c23Desktop .c23PinnedActions p{font-size:11px;margin:0}
+
 </style>
 </head>
 <body>
 <div class="wrap">
   <div class="top">
     <div class="brand">CARREIRA <span>10</span></div>
-    <div class="tag">v0.9.22 · Escolhas com Continuidade</div>
+    <div class="tag">v0.9.23 · O jogo na sua tela</div>
   </div>
 
   <section id="setup" class="panel">
@@ -4604,7 +4619,7 @@ new MutationObserver(()=>bSync()).observe($('game'),{attributes:true,attributeFi
 const bEngineRetire=retire;retire=function(){const result=bEngineRetire();if(!diagnosticMode091){bUi.pending={kind:"retired",stage:"Carreira encerrada",title:"Sua história deixou um legado",text:P.name+" · "+P.games+" jogos · "+P.goals+" gols · "+P.trophies+" títulos",scene:"stadium"};bRoute("flow")}return result};
 
 /* v0.9.3 — portability and recovery tools. The save schema remains version 73. */
-const C10_RELEASE='0.9.22';
+const C10_RELEASE='0.9.23';
 const C10_EXPORT_KIND='carreira10-save';
 
 function c10Download(name,text,type='application/json'){
@@ -5668,7 +5683,7 @@ function a3Hero({title,text,stage,event,action=''}){
  const thread=event?.c10Thread?c10Thread(event.c10Thread.id):null;
  const compact=thread?.type==='club'&&event.c10Thread.stage==='start'&&text===event.d;
  const short=compact?(thread.moved?`Você escolheu ${thread.from} → ${thread.to}. Uma nova camisa abre possibilidades e deixa vínculos para trás. Como você quer viver essa mudança?`:`Você escolheu continuar no ${thread.club}. Preservar o vínculo também é uma decisão sobre o futuro da sua carreira.`):text;
- return `<section class="a3Hero"><div class="a3PlayerArt" style="background-image:url('${A3_ART.player}');background-position:${a3AgePosition()} top" aria-hidden="true"></div><div class="a3HeroCopy"><span class="a3Kicker">${bEsc(stage||'Sua história em campo')}</span><h1>${bEsc(title)}</h1><p class="a3StoryText">${bEsc(short||'')}</p>${action}${a3Metrics(event)}${compact?`<details class="a3FullContext"><summary>Ver contexto completo</summary><p>${bEsc(text)}</p></details>`:''}</div></section>`;
+ return `<section class="a3Hero"><div class="a3PlayerArt" style="background-image:url('${A3_ART.player}');background-position:${a3AgePosition()} top" aria-hidden="true"></div><div class="a3HeroCopy"><span class="a3Kicker">${bEsc(stage||'Sua história em campo')}</span><h1>${bEsc(title)}</h1><p class="a3StoryText">${c23RichText(short||'')}</p>${action}${a3Metrics(event)}${compact?`<details class="a3FullContext"><summary>Ver contexto completo</summary><p>${c23RichText(text)}</p></details>`:''}</div></section>`;
 }
 function a3Journey(){
  const phase=P.savedFlow?.phase||'opening';
@@ -5685,7 +5700,7 @@ function a3OptionDetails(option){
 function a3RenderEvent(event,kind,onChoose,extra=''){
  const title=event.t||event.title||'Sua próxima escolha',text=event.d||event.desc||'',scene=bEventScene(event);
  const details=extra?`<details class="a3SceneDetails"><summary>Ver temporada, projeções e contexto</summary>${extra}</details>`:'';
- const markup=`<div class="a3Scene"><div class="a3StoryColumn">${a3Hero({title,text,stage:kind,event})}${details}</div><div class="a3DecisionColumn">${a3Speaker(event)}<div class="a3DecisionHeading"><h2>Como você quer seguir?</h2><p>Compare possibilidades e custos antes de escolher.</p></div><div class="bChoices a3Choices">${event.opts.map((o,i)=>`<article class="a3Choice"><div class="a3ChoiceNumber" aria-hidden="true">${String(i+1).padStart(2,'0')}</div><div class="a3ChoiceBody"><h3>${bEsc(o.label)}</h3><p>${bEsc(o.text||'')}</p>${a3OptionDetails(o)}<button type="button" class="a3Choose" data-b-choice="${i}" aria-label="Escolher: ${bEsc(o.label)}"><span aria-hidden="true">→</span></button></div></article>`).join('')}</div></div></div>${a3Journey()}`;
+ const markup=`<div class="a3Scene"><div class="a3StoryColumn">${a3Hero({title,text,stage:kind,event})}${details}</div><div class="a3DecisionColumn">${a3Speaker(event)}<div class="a3DecisionHeading"><h2>Como você quer seguir?</h2><p>Compare possibilidades e custos antes de escolher.</p></div><div class="bChoices a3Choices">${event.opts.map((o,i)=>`<article class="a3Choice"><div class="a3ChoiceNumber" aria-hidden="true">${String(i+1).padStart(2,'0')}</div><div class="a3ChoiceBody"><h3>${bEsc(o.label)}</h3><p>${c23RichText(o.text||'')}</p>${a3OptionDetails(o)}<button type="button" class="a3Choose" data-b-choice="${i}" aria-label="Escolher: ${bEsc(o.label)}"><span aria-hidden="true">→</span></button></div></article>`).join('')}</div></div></div>${a3Journey()}`;
  bMount({kind:'event',stage:kind,title,text,scene},markup,()=>{$('mainScreen').querySelectorAll('[data-b-choice]').forEach(button=>bOnce(button,()=>{
   const all=$('mainScreen').querySelectorAll('[data-b-choice]');all.forEach(b=>b.disabled=true);
   try{onChoose(Number(button.dataset.bChoice));}catch(error){all.forEach(b=>b.disabled=false);throw error;}
@@ -5696,7 +5711,7 @@ function a3RenderResult({event,opt,buttonLabel='Continuar',onContinue}){
  if(opt.oldBond)(opt.oldBond>0?gains:costs).push(`Torcida anterior ${opt.oldBond>0?'+':''}${opt.oldBond}`);
  if(opt.actorDelta)(opt.actorDelta>0?gains:costs).push(`Relação pessoal ${opt.actorDelta>0?'+':''}${opt.actorDelta}`);
  const title=opt.label,text=opt.text||'A escolha passa a fazer parte da sua carreira.';
- bMount({kind:'consequence',stage:'Consequência da decisão',title,text,scene:bEventScene(event)},`<div class="a3Scene a3Result"><div><section class="bPanel c22ResultStory"><span class="a3Kicker">Consequência da escolha</span><h1>${bEsc(title)}</h1><p>${bEsc(text)}</p>${a3Metrics(event)}</section></div><div class="a3DecisionColumn">${a3Speaker(event)}<section class="a3Outcome"><span class="a3Kicker">Decisão registrada</span><h2>O que mudou agora</h2><div class="a3OutcomeGrid"><section><h3>Ganhos imediatos</h3>${gains.length?gains.map(t=>`<p class="positive">${bEsc(t)}</p>`).join(''):'<p>Sem ganho numérico imediato.</p>'}</section><section><h3>Custos e riscos</h3>${costs.length?costs.map(t=>`<p class="negative">${bEsc(t)}</p>`).join(''):'<p>Sem custo numérico imediato.</p>'}</section></div>${bMetrics([['OVR',P.ovr],['Forma',Math.round(P.form)],['Moral',Math.round(P.morale)],['Físico',Math.round(P.physical)]])}<button class="btn primary a3Continue" id="narrativeContinueBtn">${bEsc(buttonLabel)} →</button><p class="a3Caveat">A escolha e este ponto da carreira ficam no salvamento automático.</p></section></div></div>${a3Journey()}`,()=>bOnce($('narrativeContinueBtn'),onContinue));
+ bMount({kind:'consequence',stage:'Consequência da decisão',title,text,scene:bEventScene(event)},`<div class="a3Scene a3Result"><div><section class="bPanel c22ResultStory"><span class="a3Kicker">Consequência da escolha</span><h1>${bEsc(title)}</h1><p>${c23RichText(text)}</p>${a3Metrics(event)}</section></div><div class="a3DecisionColumn">${a3Speaker(event)}<section class="a3Outcome"><span class="a3Kicker">Decisão registrada</span><h2>O que mudou agora</h2><div class="a3OutcomeGrid"><section><h3>Ganhos imediatos</h3>${gains.length?gains.map(t=>`<p class="positive">${bEsc(t)}</p>`).join(''):'<p>Sem ganho numérico imediato.</p>'}</section><section><h3>Custos e riscos</h3>${costs.length?costs.map(t=>`<p class="negative">${bEsc(t)}</p>`).join(''):'<p>Sem custo numérico imediato.</p>'}</section></div>${bMetrics([['OVR',P.ovr],['Forma',Math.round(P.form)],['Moral',Math.round(P.morale)],['Físico',Math.round(P.physical)]])}<button class="btn primary a3Continue" id="narrativeContinueBtn">${bEsc(buttonLabel)} →</button><p class="a3Caveat">A escolha e este ponto da carreira ficam no salvamento automático.</p></section></div></div>${a3Journey()}`,()=>bOnce($('narrativeContinueBtn'),onContinue));
 }
 // As rotas e os eventos de clique originais continuam responsáveis pela navegação.
 const a3SyncBase=bSync;
@@ -5824,11 +5839,122 @@ const c22SummaryBase=showSeasonSummary;
 showSeasonSummary=function(s){const result=c22SummaryBase(s);if(!diagnosticMode091)$('mainScreen').insertAdjacentHTML('afterbegin',c22SeasonClosure(s));return result;};
 
 
+/* v0.9.23 — composição desktop, relatórios paginados e identidade da seleção. */
+function c23RichText(value){
+ return bEsc(String(value||'')).replace(/&lt;(\/?)(b|strong|em|i)&gt;/gi,(_,slash,tag)=>`<${slash}${/^(b|strong)$/i.test(tag)?'strong':'em'}>`).replace(/&lt;br\s*\/?&gt;/gi,'<br>');
+}
+const C23_NATIONS={
+ Brasil:{code:'BRA',flag:'🇧🇷',accent:'#ffdf56',second:'#65d19a',bg:'#071d18',panel:'#102d26'},
+ Argentina:{code:'ARG',flag:'🇦🇷',accent:'#94d9ff',second:'#f6dd83',bg:'#0a1b2c',panel:'#142e45'},
+ Portugal:{code:'POR',flag:'🇵🇹',accent:'#ff998b',second:'#73d4a3',bg:'#210e15',panel:'#361d25'},
+ Espanha:{code:'ESP',flag:'🇪🇸',accent:'#ffd066',second:'#ff8b83',bg:'#241310',panel:'#38221e'}
+};
+function c23NationalContext(){return bUi.route==='profile'&&bUi.tabs.profile==='national'||bUi.route==='flow'&&P?.savedFlow?.phase==='national';}
+function c23Nation(nation){return C23_NATIONS[nation]||{code:String(nation||'SEL').slice(0,3).toUpperCase(),flag:'⚽',accent:'#c5d9ef',second:'#90aac3',bg:'#0b1926',panel:'#152a3d'};}
+function c23Flag(nation){const name=({'Brasil':'br','Argentina':'ar','Portugal':'pt','Espanha':'es'})[nation];return name?`<span class="c23Flag c23Flag-${name}" role="img" aria-label="Bandeira de ${bEsc(nation)}"></span>`:`<span class="c23NationFlag">${bEsc(c23Nation(nation).code)}</span>`;}
+function c23Theme(){
+ if(!P)return;const national=c23NationalContext(),n=c23Nation(P.nation);
+ document.body.classList.toggle('c23National',national);
+ if(national){document.body.style.setProperty('--a3-accent',n.accent);document.body.style.setProperty('--c23-bg',n.bg);document.body.style.setProperty('--c23-panel',n.panel);document.body.style.setProperty('--c23-second',n.second);
+  const badge=bHeader.querySelector('.bClub');if(badge)badge.innerHTML=`${c23Flag(P.nation)}<div><strong>${bEsc(P.nation)}</strong><small>Seleção nacional · ${n.code}</small></div>`;
+ }
+}
+const c23SyncBase=bSync;bSync=function(){c23SyncBase();c23Theme();};
+
+// Contexto detalhado continua acessível, sem empurrar as escolhas para fora da tela.
+function c23Dialog(title,nodes,restore){
+ const dialog=document.createElement('dialog');dialog.className='c23Dialog';
+ const head=document.createElement('header'),h=document.createElement('h2'),close=document.createElement('button');h.textContent=title;close.textContent='Fechar ×';close.className='btn';head.append(h,close);
+ const content=document.createElement('div');content.className='c23DialogContent';nodes.forEach(n=>content.append(n));dialog.append(head,content);document.body.append(dialog);
+ close.onclick=()=>dialog.close();dialog.addEventListener('close',()=>{restore?.([...content.children]);dialog.remove();});dialog.showModal();c23Deck(content);
+}
+function c23DetailDialogs(root){
+ for(const detail of root.querySelectorAll('details:not(.a3Tools)')){
+  if(detail.dataset.c23Dialog)return;detail.dataset.c23Dialog='1';const summary=detail.querySelector('summary');if(!summary)continue;
+  summary.addEventListener('click',event=>{
+   if(!c23Desktop())return;event.preventDefault();const nodes=[...detail.children].filter(n=>n!==summary);
+   c23Dialog(summary.textContent,nodes,items=>{items.forEach(n=>detail.append(n));summary.focus();});
+  });
+ }
+}
+function c23Desktop(){return typeof window.matchMedia==='function'&&window.matchMedia('(min-width: 1024px) and (min-height: 620px)').matches;}
+function c23Blocks(node){
+ const flatten=node.matches('.bMacroContent,.bMacroColumns,.bGrid,.bLayout,.bSummaryTop,.a3HomeGrid,.a3HomeBottom,.a3HomeAside,.bOffers,.bOfferGrid,.bMarketProjects,.c10EssentialGrid');
+ return flatten?[...node.children].flatMap(c23Blocks):[node];
+}
+function c23PageTitle(nodes,index){return (nodes.find(n=>n.querySelector('h1,h2,h3'))?.querySelector('h1,h2,h3')?.textContent||nodes[0]?.querySelector('summary')?.textContent||`Página ${index+1}`).trim().slice(0,66);}
+// Agrupar por altura, mantendo os nós originais e seus eventos de clique.
+function c23Pack(items,limit){const rows=[];let pair=[];for(const item of items){if(item.span===2){if(pair.length){rows.push(pair);pair=[];}rows.push([item]);}else{pair.push(item);if(pair.length===2){rows.push(pair);pair=[];}}}if(pair.length)rows.push(pair);const pages=[];let page=[],height=0;for(const row of rows){const h=Math.max(...row.map(x=>x.height));if(page.length&&height+h>limit){pages.push(page);page=[];height=0;}page.push(...row);height+=h;}if(page.length)pages.push(page);return pages;}
+function c23Deck(root){
+ if(!root||root.querySelector('.c23Deck'))return;
+ const actions=root.querySelector('.bMarketActions');if(actions){actions.classList.add('c23PinnedActions');root.prepend(actions);}
+ let nodes=[...root.children].filter(n=>!n.matches('.bFlowBack,.c23PageTools,.c23PinnedActions'));
+ if(!nodes.length)return;
+ if(nodes.length===1&&nodes[0].matches('.bMacro')){
+  const macro=nodes[0],content=macro.querySelector('.bMacroContent');if(content){macro.classList.add('c23MacroHost');root=content;nodes=[...content.children];}
+ }
+ const deck=document.createElement('section');deck.className='c23Deck';deck.setAttribute('aria-label','Conteúdo da página');
+ const stage=document.createElement('div');stage.className='c23DeckBody';const nav=document.createElement('nav');nav.className='c23Pager';nav.setAttribute('aria-label','Páginas do conteúdo');
+ const previous=document.createElement('button'),next=document.createElement('button'),select=document.createElement('select'),status=document.createElement('span');
+ previous.textContent='← Anterior';next.textContent='Próxima →';previous.className=next.className='btn';select.setAttribute('aria-label','Seção da página');status.setAttribute('aria-live','polite');nav.append(previous,select,status,next);deck.append(stage,nav);root.append(deck);
+ let blocks=nodes.flatMap(c23Blocks),pages=[],index=0;
+ const show=i=>{index=Math.max(0,Math.min(i,pages.length-1));pages.forEach((p,j)=>p.hidden=j!==index);previous.disabled=index===0;next.disabled=index===pages.length-1;select.value=String(index);status.textContent=`${index+1} / ${pages.length}`;};
+ const split=(node,limit,width,depth=0)=>{
+  stage.append(node);node.style.width=width+'px';const height=node.getBoundingClientRect().height+14;node.style.width='';
+  if(height<=limit||depth>5)return [node];
+  const table=node.matches('table')?node:node.querySelector('table');
+  if(table&&table.tBodies[0]?.rows.length>1){
+   const rows=[...table.tBodies[0].rows],parts=[];const size=Math.max(1,Math.floor((limit-100)/Math.max(26,rows[0].getBoundingClientRect().height)));
+   for(let i=0;i<rows.length;i+=size){const box=document.createElement('section');box.className='bPanel';const title=node.querySelector('h2,h3');if(title){const h=document.createElement('h2');h.textContent=title.textContent;box.append(h);}const t=table.cloneNode(false);if(table.tHead)t.append(table.tHead.cloneNode(true));const body=document.createElement('tbody');rows.slice(i,i+size).forEach(r=>body.append(r));t.append(body);box.append(t);parts.push(box);}node.remove();return parts;
+  }
+  const kids=[...node.children],heading=kids.find(n=>n.matches('h1,h2,h3'));
+  if(kids.length>1&&!node.matches('.bOffer,.a3Choice,.bMetrics,.bHero')){
+   const pieces=[];for(const child of kids){if(child===heading)continue;for(const part of split(child,Math.max(90,limit-55),Math.max(140,width-32),depth+1)){const panel=document.createElement('section');panel.className='bPanel c23Fragment';if(heading){const h=document.createElement('h2');h.textContent=heading.textContent;panel.append(h);}panel.append(part);pieces.push(panel);}}node.remove();return pieces;
+  }
+  // Long prose has explicit continuation pages, rather than a clipped paragraph.
+  if(node.matches('p')&&node.textContent.length>450&&!node.querySelector('a,button')){
+   const words=node.textContent.split(/\s+/),parts=[];for(let i=0;i<words.length;i+=65){const p=document.createElement('p');p.className=node.className;p.textContent=words.slice(i,i+65).join(' ');parts.push(p);}node.remove();return parts;
+  }
+  return [node];
+ };
+ const layout=()=>{
+  blocks.forEach(n=>stage.append(n));stage.style.setProperty('--c23-stage-height',Math.max(100,window.innerHeight-stage.getBoundingClientRect().top-90)+'px');
+  if(!c23Desktop()){pages.forEach(p=>p.remove());stage.append(...blocks);pages=[];return;}
+  const height=Math.max(100,Math.min(stage.getBoundingClientRect().height,window.innerHeight-stage.getBoundingClientRect().top-94)),width=stage.clientWidth;
+  const wide=n=>n.matches('.bComparison,.bMacroTable')||!!n.querySelector('table');
+  stage.classList.add('c23Measuring');const expanded=blocks.flatMap(n=>split(n,height,wide(n)?width:(width-16)/2));blocks=expanded;
+  const measured=expanded.map(n=>{stage.append(n);const span=wide(n)?2:1;n.style.width=(span===2?width:(width-16)/2)+'px';const height=n.getBoundingClientRect().height+14;n.style.width='';return {node:n,height,span};});
+  pages.forEach(p=>p.remove());pages=c23Pack(measured,height).map(items=>{const page=document.createElement('div');page.className='c23Page';page.setAttribute('role','group');items.forEach(x=>{x.node.style.gridColumn=x.span===2?'1 / -1':'';page.append(x.node);});stage.append(page);return page;});stage.classList.remove('c23Measuring');
+  select.replaceChildren(...pages.map((p,i)=>{const o=document.createElement('option');o.value=String(i);o.textContent=(i+1)+'. '+c23PageTitle([...p.children],i);return o;}));show(Math.min(index,pages.length-1));
+ };
+ previous.onclick=()=>show(index-1);next.onclick=()=>show(index+1);select.onchange=()=>show(Number(select.value));deck.c23Layout=layout;layout();
+}
+let c23Reading=false;
+const c23ContextBase=c22DecisionContext;c22DecisionContext=function(event){return c23ContextBase(event).replace(/(<div class="c22Context"><p>[\s\S]*?<\/p>)<p>([\s\S]*?)<\/p><\/div>/,'$1<details><summary>Entender minha utilização</summary><p>$2</p></details></div>');};
+function c23Refresh(){
+ if(!P||!document.body.getBoundingClientRect)return;
+ const playing=!$('game').classList.contains('hidden');document.body.classList.toggle('c23Desktop',playing&&c23Desktop()&&!c23Reading);
+ if(!playing)return;
+ c23Theme();if(!bSide.querySelector('.c23Mode')){const button=document.createElement('button');button.className='c23Mode';button.textContent='Leitura contínua';button.onclick=()=>{c23Reading=!c23Reading;button.textContent=c23Reading?'Ajustar à tela':'Leitura contínua';c23Refresh();};bSide.append(button);const visuals=document.querySelector('.visualSettings');if(visuals)bSide.querySelector('.a3ToolsBody')?.append(visuals);}
+ const root=bUi.route==='home'?bHome:bUi.route==='flow'?$('mainScreen'):$('careerCenterBody');if(!root)return;
+ root.style.setProperty('--c23-height',Math.max(300,window.innerHeight-root.getBoundingClientRect().top-12)+'px');
+ c23DetailDialogs(root);
+ document.body.classList.remove('c23Extended');
+ if(root.querySelector('.a3Scene')){root.classList.add('c23Flow');requestAnimationFrame(()=>{if(!c23Desktop()||c23Reading)return;const hero=root.querySelector('.a3Hero'),copy=root.querySelector('.a3HeroCopy'),last=root.querySelector('.a3Choices');if(hero&&copy&&copy.getBoundingClientRect().height>hero.getBoundingClientRect().height+3||last&&last.getBoundingClientRect().bottom>window.innerHeight-32)document.body.classList.add('c23Extended');});return;}
+ root.classList.remove('c23Flow');c23Deck(root);
+}
+if(typeof window.matchMedia==='function'){
+ let c23Queued=false;const schedule=()=>{if(c23Queued)return;c23Queued=true;requestAnimationFrame(()=>{c23Queued=false;c23Refresh();});};
+ new MutationObserver(records=>{if(records.some(r=>!r.target.closest?.('.c23Deck,.c23Dialog,.bHeader')))schedule();}).observe($('game'),{childList:true,subtree:true});
+ window.addEventListener('resize',()=>{schedule();document.querySelectorAll('.c23Deck').forEach(n=>n.c23Layout?.());});
+ schedule();
+}
+
 
 })();
 //# sourceURL=carreira10-engine.js
 </script>
-<div class="c10BuildStamp" hidden>Carreira 10 v0.9.22 · Escolhas com Continuidade · base 2023.1 · equilíbrio global 2 · save schema 73</div>
+<div class="c10BuildStamp" hidden>Carreira 10 v0.9.23 · O jogo na sua tela · base 2023.1 · equilíbrio global 2 · save schema 73</div>
 </body>
 </html>
 
