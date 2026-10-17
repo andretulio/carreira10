@@ -471,6 +471,10 @@ body.c10FontLarge{--c10-body:15px;--c10-detail:14px;--c10-caption:12px;--c10-lea
  @media(max-height:800px){.c23Desktop .c23Flow .a3HeroCopy{padding-top:60px}.c23Desktop .c23Flow .a3Hero h1{font-size:30px}.c23Desktop .c23Flow .a3Speaker p{display:none}.c23Desktop .c23Flow .a3Choice{padding-top:9px;padding-bottom:9px}.c23Desktop .c23Flow .a3Metrics{margin-top:12px}.c23Desktop .c23Flow .a3Hero .a3StoryText{font-size:13px}.c23Desktop .c23Flow .a3OutcomeGrid p{font-size:12px}.c23Desktop .c23Flow .a3Outcome h2{margin-bottom:8px}}
 }
 .bGame:not(.c23Desktop) .c23Page[hidden]{display:grid!important}.bGame:not(.c23Desktop) .c23DeckBody{height:auto!important}.bGame:not(.c23Desktop) .c23Pager{display:none}.bGame:not(.c23Desktop) .c23Page{margin-bottom:14px}@media(max-width:1023px){.c23Page{grid-template-columns:1fr}.c23Mode{display:none}.c23Dialog{height:92dvh;overflow:auto}.c23Pager select{font-size:11px}.c23Page>*{grid-column:auto!important}}
+.c23Flag{display:inline-block;width:46px;height:30px;position:relative;flex:none;border-radius:3px;overflow:hidden;box-shadow:0 0 0 1px #ffffff30}.c23Flag-br{background:#18844b}.c23Flag-br:before{content:'';position:absolute;width:22px;height:22px;background:#ffe054;transform:rotate(45deg);left:12px;top:4px}.c23Flag-br:after{content:'';position:absolute;width:14px;height:14px;border-radius:50%;background:#235398;left:16px;top:8px}.c23Flag-ar{background:linear-gradient(#8bd3f0 0 33%,#fff 33% 66%,#8bd3f0 66%)}.c23Flag-ar:after{content:'';position:absolute;width:7px;height:7px;background:#dba93a;border-radius:50%;left:20px;top:12px}.c23Flag-pt{background:linear-gradient(90deg,#187148 0 40%,#db3841 40%)}.c23Flag-pt:after{content:'';position:absolute;width:10px;height:14px;border:2px solid #f8d65a;background:#fff;border-radius:4px;left:14px;top:7px}.c23Flag-es{background:linear-gradient(#c72e3e 0 25%,#ffd85d 25% 75%,#c72e3e 75%)}.c23Flag-es:after{content:'';position:absolute;width:7px;height:10px;background:#bd3340;left:12px;top:10px;border:1px solid #fff8}
+.c23Desktop #careerCenterTitle{font-size:20px;margin:3px 0}.c23Desktop #careerCenterSub{font-size:11px;margin:3px 0}.c23Desktop .c23MacroHost>.bMetrics .bMetric{padding:7px 12px}.c23Desktop .c23MacroHost>.bMetrics .bMetric b{font-size:21px}.c23Desktop .c23MacroHost>.bHero{padding:9px 16px}.c23Desktop .c23MacroHost>.bHero h1{font-size:23px;margin:5px 0}
+.c23Desktop .a3ToolsBody .visualSettings{display:block;padding:8px 0}.c23Desktop.c10FontLarge .c23Flow .a3Hero .a3StoryText{font-size:16px}.c23Desktop.c10FontLarge .c23Flow .a3Choice p{font-size:15px}.c23Desktop.c10FontLarge .c23Flow .a3Choice h3{font-size:21px}.c23Desktop.c10FontLarge .c23Flow .a3Effects .bEffect{font-size:13px}.c23Extended{overflow:auto!important;height:auto!important}.c23Extended .c23Flow .a3Scene{height:auto;min-height:calc(100dvh - 190px)}.c23Extended .c23Flow .a3Hero{height:auto}.c23Extended .c23Flow .a3Choices{grid-template-rows:none}
+@media(min-width:1024px) and (min-height:620px){body:not(.bGame) .wrap{max-width:1500px;padding:12px 22px}body:not(.bGame) #setup.c10Setup{padding:18px 22px;margin-top:8px}body:not(.bGame) #setup>h1{font-size:30px;line-height:1.15;margin:7px 0}body:not(.bGame) #setup>p{font-size:13px;line-height:1.5;margin:7px 0}body:not(.bGame) #setup>.section{margin:0;font-size:10px}body:not(.bGame) #setup .c10StepRail{margin:12px 0;padding:0}body:not(.bGame) #setup .c10StepRail>div{padding:10px;font-size:10px}body:not(.bGame) #setup .c10SetupGrid{gap:14px;margin:12px 0}body:not(.bGame) #setup .c10SetupGrid>div{padding:14px 18px}body:not(.bGame) #setup .c10SetupGrid h2{font-size:23px;margin:6px 0}body:not(.bGame) #setup .c10SetupGrid p{font-size:12px;margin:6px 0;line-height:1.4}body:not(.bGame) #setup .form{padding:13px;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin:12px 0}body:not(.bGame) #setup .form input,body:not(.bGame) #setup .form select{padding:10px;font-size:13px}body:not(.bGame) #setup .actions{gap:8px;margin:12px 0}body:not(.bGame) #setup .actions .btn{padding:9px 12px;font-size:12px}body:not(.bGame) #setup>.small{font-size:10px;line-height:1.45;margin-top:6px}}
 
 </style>
 </head>
@@ -5845,11 +5849,12 @@ const C23_NATIONS={
 };
 function c23NationalContext(){return bUi.route==='profile'&&bUi.tabs.profile==='national'||bUi.route==='flow'&&P?.savedFlow?.phase==='national';}
 function c23Nation(nation){return C23_NATIONS[nation]||{code:String(nation||'SEL').slice(0,3).toUpperCase(),flag:'⚽',accent:'#c5d9ef',second:'#90aac3',bg:'#0b1926',panel:'#152a3d'};}
+function c23Flag(nation){const name=({'Brasil':'br','Argentina':'ar','Portugal':'pt','Espanha':'es'})[nation];return name?`<span class="c23Flag c23Flag-${name}" role="img" aria-label="Bandeira de ${bEsc(nation)}"></span>`:`<span class="c23NationFlag">${bEsc(c23Nation(nation).code)}</span>`;}
 function c23Theme(){
  if(!P)return;const national=c23NationalContext(),n=c23Nation(P.nation);
  document.body.classList.toggle('c23National',national);
  if(national){document.body.style.setProperty('--a3-accent',n.accent);document.body.style.setProperty('--c23-bg',n.bg);document.body.style.setProperty('--c23-panel',n.panel);document.body.style.setProperty('--c23-second',n.second);
-  const badge=bHeader.querySelector('.bClub');if(badge)badge.innerHTML=`<span class="c23NationFlag" aria-hidden="true">${n.flag}</span><div><strong>${bEsc(P.nation)}</strong><small>Seleção nacional · ${n.code}</small></div>`;
+  const badge=bHeader.querySelector('.bClub');if(badge)badge.innerHTML=`${c23Flag(P.nation)}<div><strong>${bEsc(P.nation)}</strong><small>Seleção nacional · ${n.code}</small></div>`;
  }
 }
 const c23SyncBase=bSync;bSync=function(){c23SyncBase();c23Theme();};
@@ -5879,7 +5884,7 @@ function c23PageTitle(nodes,index){return (nodes.find(n=>n.querySelector('h1,h2,
 // Agrupar por altura, mantendo os nós originais e seus eventos de clique.
 function c23Pack(items,limit){const rows=[];let pair=[];for(const item of items){if(item.span===2){if(pair.length){rows.push(pair);pair=[];}rows.push([item]);}else{pair.push(item);if(pair.length===2){rows.push(pair);pair=[];}}}if(pair.length)rows.push(pair);const pages=[];let page=[],height=0;for(const row of rows){const h=Math.max(...row.map(x=>x.height));if(page.length&&height+h>limit){pages.push(page);page=[];height=0;}page.push(...row);height+=h;}if(page.length)pages.push(page);return pages;}
 function c23Deck(root){
- if(!root||root.querySelector(':scope > .c23Deck'))return;
+ if(!root||root.querySelector('.c23Deck'))return;
  let nodes=[...root.children].filter(n=>!n.matches('.bFlowBack,.c23PageTools'));
  if(!nodes.length)return;
  if(nodes.length===1&&nodes[0].matches('.bMacro')){
@@ -5901,7 +5906,7 @@ function c23Deck(root){
   }
   const kids=[...node.children],heading=kids.find(n=>n.matches('h1,h2,h3'));
   if(kids.length>1&&!node.matches('.bOffer,.a3Choice,.bMetrics,.bHero')){
-   const pieces=[];for(const child of kids){if(child===heading)continue;const panel=document.createElement('section');panel.className='bPanel c23Fragment';if(heading){const h=document.createElement('h2');h.textContent=heading.textContent;panel.append(h);}panel.append(child);pieces.push(...split(panel,limit,width,depth+1));}node.remove();return pieces;
+   const pieces=[];for(const child of kids){if(child===heading)continue;for(const part of split(child,Math.max(90,limit-55),Math.max(140,width-32),depth+1)){const panel=document.createElement('section');panel.className='bPanel c23Fragment';if(heading){const h=document.createElement('h2');h.textContent=heading.textContent;panel.append(h);}panel.append(part);pieces.push(panel);}}node.remove();return pieces;
   }
   // Long prose has explicit continuation pages, rather than a clipped paragraph.
   if(node.matches('p')&&node.textContent.length>450&&!node.querySelector('a,button')){
@@ -5910,9 +5915,9 @@ function c23Deck(root){
   return [node];
  };
  const layout=()=>{
-  blocks.forEach(n=>stage.append(n));stage.style.setProperty('--c23-stage-height',Math.max(240,window.innerHeight-stage.getBoundingClientRect().top-66)+'px');
+  blocks.forEach(n=>stage.append(n));stage.style.setProperty('--c23-stage-height',Math.max(100,window.innerHeight-stage.getBoundingClientRect().top-66)+'px');
   if(!c23Desktop()){pages.forEach(p=>p.remove());stage.append(...blocks);pages=[];return;}
-  const height=Math.max(200,window.innerHeight-stage.getBoundingClientRect().top-70),width=stage.clientWidth;
+  const height=Math.max(100,Math.min(stage.getBoundingClientRect().height,window.innerHeight-stage.getBoundingClientRect().top-70)),width=stage.clientWidth;
   const wide=n=>n.matches('.bComparison,.bMacroTable')||!!n.querySelector('table');
   stage.classList.add('c23Measuring');const expanded=blocks.flatMap(n=>split(n,height,wide(n)?width:(width-16)/2));blocks=expanded;
   const measured=expanded.map(n=>{stage.append(n);const span=wide(n)?2:1;n.style.width=(span===2?width:(width-16)/2)+'px';const height=n.getBoundingClientRect().height+14;n.style.width='';return {node:n,height,span};});
@@ -5927,11 +5932,12 @@ function c23Refresh(){
  if(!P||!document.body.getBoundingClientRect)return;
  const playing=!$('game').classList.contains('hidden');document.body.classList.toggle('c23Desktop',playing&&c23Desktop()&&!c23Reading);
  if(!playing)return;
- c23Theme();if(!bSide.querySelector('.c23Mode')){const button=document.createElement('button');button.className='c23Mode';button.textContent='Leitura contínua';button.onclick=()=>{c23Reading=!c23Reading;button.textContent=c23Reading?'Ajustar à tela':'Leitura contínua';c23Refresh();};bSide.append(button);}
+ c23Theme();if(!bSide.querySelector('.c23Mode')){const button=document.createElement('button');button.className='c23Mode';button.textContent='Leitura contínua';button.onclick=()=>{c23Reading=!c23Reading;button.textContent=c23Reading?'Ajustar à tela':'Leitura contínua';c23Refresh();};bSide.append(button);const visuals=document.querySelector('.visualSettings');if(visuals)bSide.querySelector('.a3ToolsBody')?.append(visuals);}
  const root=bUi.route==='home'?bHome:bUi.route==='flow'?$('mainScreen'):$('careerCenterBody');if(!root)return;
  root.style.setProperty('--c23-height',Math.max(300,window.innerHeight-root.getBoundingClientRect().top-12)+'px');
  c23DetailDialogs(root);
- if(root.querySelector('.a3Scene')){root.classList.add('c23Flow');return;}
+ document.body.classList.remove('c23Extended');
+ if(root.querySelector('.a3Scene')){root.classList.add('c23Flow');requestAnimationFrame(()=>{if(!c23Desktop()||c23Reading)return;const hero=root.querySelector('.a3Hero'),copy=root.querySelector('.a3HeroCopy'),last=root.querySelector('.a3Choices');if(hero&&copy&&copy.getBoundingClientRect().height>hero.getBoundingClientRect().height+3||last&&last.getBoundingClientRect().bottom>window.innerHeight-32)document.body.classList.add('c23Extended');});return;}
  root.classList.remove('c23Flow');c23Deck(root);
 }
 if(typeof window.matchMedia==='function'){
