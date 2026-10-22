@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Carreira 10 — v0.9.24 · Comparar com clareza</title>
+<title>Carreira 10 — v0.9.25 · Histórias em disputa</title>
 <style>
 :root{
   --bg:#090e0a;--p:#101812;--p2:#151f17;--p3:#0d140f;--ln:#29372c;--tx:#f2f5f2;--mu:#9fad9f;
@@ -480,7 +480,7 @@ body.c10FontLarge{--c10-body:15px;--c10-detail:14px;--c10-caption:12px;--c10-lea
 <div class="wrap">
   <div class="top">
     <div class="brand">CARREIRA <span>10</span></div>
-    <div class="tag">v0.9.24 · Comparar com clareza</div>
+    <div class="tag">v0.9.25 · Histórias em disputa</div>
   </div>
 
   <section id="setup" class="panel">
@@ -4615,7 +4615,7 @@ new MutationObserver(()=>bSync()).observe($('game'),{attributes:true,attributeFi
 const bEngineRetire=retire;retire=function(){const result=bEngineRetire();if(!diagnosticMode091){bUi.pending={kind:"retired",stage:"Carreira encerrada",title:"Sua história deixou um legado",text:P.name+" · "+P.games+" jogos · "+P.goals+" gols · "+P.trophies+" títulos",scene:"stadium"};bRoute("flow")}return result};
 
 /* v0.9.3 — portability and recovery tools. The save schema remains version 73. */
-const C10_RELEASE='0.9.24';
+const C10_RELEASE='0.9.25';
 const C10_EXPORT_KIND='carreira10-save';
 
 function c10Download(name,text,type='application/json'){
@@ -5858,11 +5858,108 @@ function c23Theme(){
 const c23SyncBase=bSync;bSync=function(){c23SyncBase();c23Theme();};
 
 
+/* Histórias contextuais; intenções nunca substituem os resultados simulados. */
+const c25OfferBase=c10SpaceOfferEvent;
+c10SpaceOfferEvent=function(){
+ const e=c25OfferBase();if(!e)return e;
+ e.c10Space.c25Version=1;
+ e.opts.push({label:'Valorizar a rotação e preparar cada oportunidade',spaceIntent:'rotation',effects:{squad:4,pressureTolerance:2,minutesBonus:-80},text:'Você aceita disputar espaço sem exigir titularidade. O grupo ganha confiança; o cálculo de utilização recebe um custo imediato. O balanço continuará conferindo os minutos reais.'});
+ return e;
+};
+function c25Complication(){
+ const a=c10SpaceActive();if(!a?.c25Version||a.year!==P.year||a.complication)return null;
+ const coach=P.club?getClubPeople(P,P.club).coach:null;
+ if(!coach||P.club.name!==a.club)return null;
+ const days=physicalState().seasons[P.year]?.days||0;
+ const interrupted=days>0,changed=coach.id!==a.coachId;
+ const d=changed?`O comando agora é de ${coach.name}. O novo treinador não participou do plano com ${a.coachName}.`:interrupted?`Seu registro já tem ${days} dias de indisponibilidade nesta temporada. O plano precisa considerar a recuperação.`:`${coach.name} volta ao plano iniciado na metade da temporada. Você escolheu: ${a.choice}. Ainda não há resultado da segunda metade; esta é uma decisão sobre como seguir.`;
+ const opts=interrupted?[
+ {label:'Priorizar recuperação e aceitar menor exposição',c25Intent:'recover',effects:{physical:4,minutesBonus:-120},text:'Você protege a condição física e reduz a pressão por minutos imediatos.'},
+ {label:'Manter a cobrança respeitando a disponibilidade',c25Intent:'challenge',effects:{coach:-2,pressureTolerance:3},text:'Você sustenta a cobrança. A indisponibilidade médica continua limitando a utilização.'}
+ ]:a.intent==='market'?[
+ {label:'Manter a busca reservada por utilização',c25Intent:'search',effects:{agent:3,clubRel:-2},text:'O agente mantém a prioridade por minutos para a próxima janela. Só propostas reais poderão virar uma mudança.'},
+ {label:'Suspender a saída e reconstruir a confiança',c25Intent:'rebuild',effects:{coach:3,marketBoost:-3},text:'Você retira a busca dirigida e dá espaço à negociação interna.'}
+ ]:[
+ {label:'Negociar oportunidades sem romper com o grupo',c25Intent:'cooperate',effects:{squad:3,coach:2,minutesBonus:-60},text:'Você aceita a concorrência e investe na relação com o grupo, com menor pressão por utilização imediata.'},
+ {label:'Aumentar a preparação para disputar a vaga',c25Intent:'prepare',effects:{form:4,physical:-3},text:'Você aumenta a preparação. A forma melhora, com custo físico; isso não garante titularidade.'},
+ {label:'Pedir uma alternativa ao agente',c25Intent:'search',effects:{agent:3,clubRel:-3},text:'Você abre uma busca por utilização na próxima janela. A disponibilidade de propostas será conferida no mercado.'}
+ ];
+ return normalizeNarrativeEvent({id:'c25_space_complication_'+a.id,family:'carreira',c25Arc:a.id,t:changed?'Um novo treinador, outra negociação':interrupted?'O corpo muda o plano':'A disputa chega a uma encruzilhada',d,opts});
+}
+const c25LateBase=makeLateSeasonEvent;
+makeLateSeasonEvent=function(){const e=c25Complication();return e?c10RecordPresented(e,'late'):c25LateBase()};
+const c25ReturnBase=c10SpaceReturn;
+c10SpaceReturn=function(){
+ const e=c25ReturnBase();if(!e)return e;
+ const a=c10SpaceActive();if(a.intent==='rotation')e.d=e.d.replace('undefined','valorizar a rotação e preparar cada oportunidade');
+ if(a.complication)e.d+=` Na reta final, sua decisão foi: ${a.complication.choice}. O balanço usa os minutos registrados, sem atribuir o resultado a uma escolha isolada.`;
+ if(a.complication?.intent==='rebuild'&&a.intent==='market'&&e.opts[0].spaceResolution==='search'){
+  e.opts[0].label='Reabrir a busca por utilização';e.opts[0].text='Você volta a pedir uma alternativa com mais minutos no próximo mercado. A busca anterior havia sido suspensa; não há garantia de proposta.';
+ }
+ e.desc=e.d;return e;
+};
+const c25OpeningBase=makeEvent;
+makeEvent=function(){const a=c10SpaceActive(),e=a?.c25Version?c10SpaceReturn():null;return e?c10RecordPresented(e,'opening'):c25OpeningBase()};
+function c25Scene(id,theme,t,d,opts,when=true){return {id:'c25_'+id,c25Theme:theme,family:theme,t,d,when:()=>when,opts:opts.map(([label,effects,text])=>({label,effects,text}))}}
+function c25Catalog(phase){
+ if(!P.club)return [];
+ const club=P.club.name,coach=getClubPeople(P,P.club).coach.name,young=P.age<=22,veteran=P.age>=30;
+ const scene=c25Scene;
+ if(phase==='opening')return [
+ scene('new_city','vida','Criar raízes fora do campo',`Começa outro ciclo no ${club}. Como você quer organizar sua vida fora do treino?`,[['Investir na adaptação e numa rotina local',{morale:4,media:-2},'Você reserva tempo para se adaptar e reduz a exposição pública.'],['Manter uma rotina focada no futebol',{form:3,morale:-2},'Você concentra energia na preparação, com menos espaço para a vida social.']]),
+ scene('young_voice','vestiario','Como conquistar voz no grupo',`Você ainda está no início da carreira no ${club}. Ser ouvido também exige escolher quando falar.`,[['Ouvir os veteranos antes de se posicionar',{squad:3,rep:-1},'Você aproxima o grupo, com menor visibilidade individual.'],['Apresentar suas ideias à comissão',{coach:3,squad:-2},'Você se expõe à avaliação da comissão e ao desconforto de parte do grupo.']],young),
+ scene('senior','vestiario','A experiência pode ter outro papel',`Aos ${P.age} anos, você pode dedicar parte da preparação a apoiar o grupo.`,[['Apoiar os mais jovens',{squad:4,physical:-2},'Você dedica energia ao grupo. Isso não altera automaticamente a evolução dos colegas.'],['Preservar a preparação individual',{form:3,squad:-2},'Você protege seu próprio trabalho e assume um papel menos agregador.']],veteran),
+ scene('visibility','imprensa','Que imagem construir neste ciclo',`No ${club}, a exposição pública também disputa espaço com a rotina esportiva.`,[['Mostrar os bastidores da preparação',{media:4,pressureTolerance:-2},'Sua exposição cresce e aumenta o peso de lidar com a avaliação externa.'],['Reservar os bastidores ao clube',{coach:2,media:-3},'Você prioriza a confiança interna e perde visibilidade pública.']])
+ ];
+ if(phase==='mid')return [
+ scene('feedback','clube','Um balanço antes de cobrar',`Você pode levar a ${coach} uma avaliação do seu trabalho nesta temporada.`,[['Pedir uma avaliação franca dos limites',{coach:3,morale:-2},'Você aceita ouvir críticas e fortalece o diálogo.'],['Defender o que já entrega',{morale:3,coach:-2},'Você protege sua confiança, mas deixa menos abertura à crítica.']]),
+ scene('outside','vida','O descanso também exige uma escolha',`A rotina no ${club} deixa pouco espaço fora do futebol. Como usar o tempo que resta?`,[['Priorizar descanso e recuperação',{physical:3,media:-2},'Você recupera condição e reduz compromissos públicos.'],['Dedicar tempo às pessoas próximas',{morale:4,form:-2},'Você preserva o bem-estar e reduz a intensidade da preparação.']]),
+ scene('group','vestiario','Reconhecimento para quem aparece menos',`Nem todo trabalho no ${club} recebe a mesma atenção. Você decide como falar do grupo.`,[['Dar visibilidade aos companheiros',{squad:4,media:-2},'Você fortalece a relação com o grupo e tira o foco de si.'],['Falar apenas da própria preparação',{media:2,squad:-3},'Você mantém o foco individual e perde proximidade com o elenco.']]),
+ scene('perspective','carreira','Qual medida de progresso importa agora',`Você ainda está construindo a carreira. O próximo período pode priorizar preparação ou exposição.`,[['Aceitar menos pressão por minutos para desenvolver a forma',{form:4,minutesBonus:-100},'Você melhora a preparação com custo imediato na utilização projetada.'],['Buscar utilização imediata',{minutesBonus:100,physical:-3},'Você aumenta a pressão por oportunidades e o desgaste da rotina.']],young)
+ ];
+ return [
+ scene('noise','imprensa','Limitar o barulho da reta final',`Na reta final do ${club}, como você quer lidar com a exposição?`,[['Reduzir entrevistas para preservar o foco',{form:3,media:-3},'Você protege a preparação e diminui a presença pública.'],['Assumir uma voz pública mais presente',{media:4,pressureTolerance:-3},'Você ganha exposição e assume mais pressão externa.']]),
+ scene('balance','vida','Não levar toda a temporada para casa',`O ciclo se aproxima do fim. Você precisa decidir como recuperar energia entre os compromissos.`,[['Preservar uma rotina pessoal de descanso',{morale:3,media:-2},'Você cuida do bem-estar e reduz compromissos externos.'],['Manter o foco extra na preparação',{form:3,physical:-3},'Você aumenta a preparação com custo físico.']]),
+ scene('next_cycle','carreira','Pensar no próximo ciclo sem abandonar este',`Seu agente pode começar a mapear o mercado, enquanto você ainda tem compromissos no ${club}.`,[['Pedir um mapeamento reservado',{agent:3,clubRel:-2},'Você melhora a relação com o agente. Mapear o mercado não cria uma oferta nem obriga uma saída.'],['Concentrar as conversas no clube atual',{clubRel:3,marketBoost:-2},'Você fortalece a continuidade e reduz a pressão de mercado.']]),
+ scene('load','clube','Até onde aumentar a carga',`Você tem ${Math.round(P.physical||0)} de condição física. A preparação extra tem um custo.`,[['Preservar o corpo para as oportunidades',{physical:4,form:-2},'Você reduz a intensidade para recuperar condição.'],['Aumentar a preparação com a comissão',{form:4,physical:-4},'Você melhora a forma com desgaste explícito.']])
+ ];
+}
+function c25Eligible(e){const h=P.c25Scenes||[];return (!e.when||e.when(P))&&!h.some(x=>x.id===e.id&&P.year-x.year<3)&&!h.slice(-2).some(x=>x.theme===e.c25Theme)}
+const c25ExpandedBase=c10ExpandedChoice;
+c10ExpandedChoice=function(pool,phase,baseFactory){
+ const fresh=c25Catalog(phase).filter(c25Eligible);
+ if(fresh.length&&Math.random()<.65)return c10RememberEvent(pick(fresh),phase);
+ return c25ExpandedBase(pool,phase,baseFactory);
+};
+const c25PresentedBase=c10RecordPresented;
+c10RecordPresented=function(e,phase){
+ if(e?.c25Theme){P.c25Scenes??=[];const key=`${P.year}:${phase}:${e.id}`;if(!P.c25Scenes.some(x=>x.key===key))P.c25Scenes.push({key,id:e.id,theme:e.c25Theme,year:P.year});P.c25Scenes=P.c25Scenes.slice(-60)}
+ return c25PresentedBase(e,phase);
+};
+const c25ScheduleBase=c10ScheduleConsequence;
+c10ScheduleConsequence=function(e,o,p){if(!e.c25Arc)return c25ScheduleBase(e,o,p)};
+const c25TrackBase=c10TrackChoice;
+c10TrackChoice=function(e,o,phase){
+ c10EnsureEventDepth();const duplicate=P.eventLedger.some(x=>x.key===c10EventPhaseKey(phase,e));
+ c25TrackBase(e,o,phase);if(duplicate||!e.c25Arc)return;
+ const a=c10SpaceStories().find(x=>x.id===e.c25Arc&&x.status==='active');if(!a)return;
+ a.complication={year:P.year,choice:o.label,intent:o.c25Intent};
+ if(o.c25Intent==='search')a.marketUntil=P.year+1;
+ if(o.c25Intent==='rebuild')a.marketUntil=null;
+ addDetailedMemory(a.id+'_complication',e.t,`${e.d} Decisão: ${o.label}.`,a.club);
+};
+const c25AutoBase=c10CareerAutoPick;
+c10CareerAutoPick=function(e,strategy){
+ if(e?.c25Arc){const preferred=strategy==='minutes'?['search','challenge','prepare']:strategy==='prestige'?['prepare','search','challenge']:['recover','cooperate','rebuild'];return preferred.map(i=>e.opts.find(o=>o.c25Intent===i)).find(Boolean)||e.opts[0]}
+ if(e?.c25Theme){const weights=strategy==='minutes'?{minutesBonus:.05,coach:1,physical:.4}:strategy==='prestige'?{rep:2,media:1,form:1}:{morale:1,squad:1,physical:1,coach:1};return e.opts.slice().sort((a,b)=>Object.entries(weights).reduce((s,[k,w])=>s+((b.effects?.[k]||0)-(a.effects?.[k]||0))*w,0))[0]}
+ return c25AutoBase(e,strategy);
+};
+
 
 })();
 //# sourceURL=carreira10-engine.js
 </script>
-<div class="c10BuildStamp" hidden>Carreira 10 v0.9.24 · Comparar com clareza · base 2023.1 · equilíbrio global 2 · save schema 73</div>
+<div class="c10BuildStamp" hidden>Carreira 10 v0.9.25 · Histórias em disputa · base 2023.1 · equilíbrio global 2 · save schema 73</div>
 </body>
 </html>
 
