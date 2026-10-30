@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Carreira 10 — v0.9.25 · Histórias em disputa</title>
+<title>Carreira 10 — v0.9.26 · Continuidade da carreira</title>
 <style>
 :root{
   --bg:#090e0a;--p:#101812;--p2:#151f17;--p3:#0d140f;--ln:#29372c;--tx:#f2f5f2;--mu:#9fad9f;
@@ -474,13 +474,18 @@ body.c10FontLarge{--c10-body:15px;--c10-detail:14px;--c10-caption:12px;--c10-lea
 @media(max-width:700px){.bGame .bSidebar{height:auto}.bGame .bOffers{grid-template-columns:1fr}.bGame .bMarketActions{position:static}}
 @media(min-width:900px){.bGame #mainScreen:has(.bOffers) .bHero.compact{min-height:0;padding:14px 20px}.bGame #mainScreen:has(.bOffers) .bHero.compact .bBadge{display:none}.bGame #mainScreen:has(.bOffers) .bHero.compact h1{font-size:30px;line-height:1.15;margin:0 0 6px}.bGame #mainScreen:has(.bOffers) .bHero.compact p{font-size:13px;line-height:1.4;margin:0}.bGame #mainScreen:has(.bOffers) .bFlowBack{min-height:0;margin:8px 0}.bGame .bMarketActions.c10ActionDock{top:56px;bottom:auto;min-height:0;padding:8px;margin:8px 0}.bGame .bMarketActions.c10ActionDock .btn{padding:9px 14px;font-size:12px}.bGame .bMarketToolbar{margin:9px 0}.bGame .bMarketToolbar p{font-size:11px}.bGame .bMarketToolbar .btn{padding:9px 12px;font-size:12px}}
 
+.c26Hud{display:none}.bGame{padding-bottom:74px}.bGame .c26Hud:not(.hidden){position:fixed;z-index:48;bottom:0;left:0;right:0;display:grid;grid-template-columns:70px repeat(8,minmax(0,1fr)) 125px;align-items:center;gap:12px;padding:10px 26px;background:#0c1724fa;border-top:1px solid #3d4b5c;box-shadow:0 -8px 30px #0004;backdrop-filter:blur(14px)}.c26HudLabel{font-size:10px;letter-spacing:2px;color:var(--a3-accent)}.c26Attribute{min-width:0;display:flex;gap:9px;align-items:baseline;justify-content:space-between;border-right:1px solid #344253;padding-right:12px}.c26Attribute span{font-size:11px;color:#afbfce}.c26Attribute b{font-size:18px;color:#f4f7fa;font-variant-numeric:tabular-nums}.c26More{position:relative;font-size:11px}.c26More summary{cursor:pointer;color:#e0e8f0;padding:8px}.c26More>div{position:absolute;bottom:48px;right:0;width:290px;display:grid;gap:16px;padding:20px;background:#101e2d;border:1px solid #4b5e72;border-radius:8px;box-shadow:0 0 40px #0008}.c26More:not([open])>div{display:none}.c26ContractNotice{border-left:4px solid var(--a3-accent)!important;margin:16px 0}.c26ContractNotice h2{font-size:22px}.c26LabControls{display:flex;gap:14px;flex-wrap:wrap;align-items:end;margin:24px 0}.c26LabControls label{display:grid;gap:8px}.c26LabControls select{padding:10px;background:#10202b;color:#fff;border:1px solid #53677b;border-radius:5px}.c26LabProgress{display:grid;gap:12px;padding:20px;background:#101c29;border:1px solid #354b60;border-radius:8px}.c26LabProgress progress{width:100%;accent-color:var(--a3-accent)}
+.c26Farewell{align-self:start;padding:28px!important}.c26Farewell h2{font-size:28px}.c26Farewell p{line-height:1.7}.c26Farewell>.btn{margin-top:20px;width:100%}
+@media(max-width:1200px){.bGame .c26Hud:not(.hidden){gap:10px;padding:9px 18px;grid-template-columns:repeat(8,minmax(0,1fr)) 110px}.c26HudLabel{display:none}.c26Attribute{display:grid;gap:3px;padding-right:5px}.c26Attribute b{font-size:16px}.c26Attribute span{font-size:10px}}
+@media(max-width:700px){.bGame{padding-bottom:122px}.bGame .c26Hud:not(.hidden){padding:9px 14px;grid-template-columns:repeat(4,minmax(0,1fr)) 85px;gap:8px}.c26More{grid-column:5;grid-row:1/3}.c26More>div{bottom:65px;max-width:calc(100vw - 28px)}.c26Attribute b{font-size:15px}.c26More summary{font-size:10px;padding:4px}.c26Attribute span{font-size:9px}}
+
 </style>
 </head>
 <body>
 <div class="wrap">
   <div class="top">
     <div class="brand">CARREIRA <span>10</span></div>
-    <div class="tag">v0.9.25 · Histórias em disputa</div>
+    <div class="tag">v0.9.26 · Continuidade da carreira</div>
   </div>
 
   <section id="setup" class="panel">
@@ -2146,11 +2151,7 @@ function buildMarketOffers(player,initial=false,refresh=false){
    fallback.slice(0,3-chosen.length).forEach(c=>chosen.push(makeOffer(player,c,"surprise")));
  }
   ensureContractState(player);
-  const board=player.club?clubRelationship(player.club.name).boardTrust:50;
-  const expiring=!player.contract||player.contract.endYear<=player.year;
-  const refuses=player===P&&expiring&&(board<38||((player.lastSeason?.games||30)<12&&Math.random()<.55));
-  const stay=refuses?null:makeOffer(player,player.club,"stay");
-  if(refuses){closeCurrentContract("Não renovado");player.contractExitNote=`${player.club.name} decidiu não oferecer renovação.`;}
+  const stay=player.club?makeOffer(player,player.club,"stay"):null;
  player.lastOfferBatch=chosen.map(x=>x.club.name);
  player.recentOffers=[...player.recentOffers,...chosen.map(x=>x.club.name)].slice(-24);
   return stay?[...chosen,stay]:chosen;
@@ -4318,7 +4319,7 @@ $("startBtn").addEventListener("click",()=>{
  $("setup").classList.add("hidden");$("game").classList.remove("hidden");renderPlayer();showOffers(true);
 });
 const resume=document.createElement("button");resume.className="btn";resume.textContent="Retomar última temporada salva";resume.onclick=restoreWorldCheckpoint;$("startBtn").insertAdjacentElement("afterend",resume);
-$("labBtn").addEventListener("click",runLab);
+$("labBtn").addEventListener("click",()=>runLab());
 $("hallBtn").addEventListener("click",showHall);
 $("backBtn").addEventListener("click",()=>{$("lab").classList.add("hidden");$("setup").classList.remove("hidden")});
 $("hallBackBtn").addEventListener("click",()=>{$("hall").classList.add("hidden");$("setup").classList.remove("hidden")});
@@ -4593,10 +4594,10 @@ const bEngineNational=showNationalTeamMoment;showNationalTeamMoment=function(sea
 const bEngineRecovery=preparePhysicalHalf;preparePhysicalHalf=function(...args){const interrupted=bEngineRecovery(...args);if(interrupted&&!args[2]&&!diagnosticMode091){const buttons=[...$('mainScreen').querySelectorAll('[data-recovery]')];bRenderEvent(bCapturedRecovery,'Condição física',i=>buttons[i].click())}return interrupted};
 renderChoiceResult=function(options){return a3RenderResult(options)};
 function bOfferCard(o,i,mid){const former=P.club&&o.club.name!==P.club.name&&P.visited?.includes(o.club.name),badge=o.rivalContext?'Rival de '+o.rivalContext.rivalOf:o.returnContext?'Clube formador':former?'Ex-clube':o.type==='loan'?'Empréstimo':'Proposta';const people=getClubPeople(P,o.club);return '<article class="bOffer '+(bUi.selected===i?'selected':'')+'"><div class="bOfferTop"><span class="bOfferBadge '+(o.rivalContext?'risk':'')+'">'+bEsc(badge)+'</span><div class="bClubTitle">'+visualAsset('crest',o.club.name,58)+'<div><h3>'+bEsc(o.club.name)+'</h3><small>'+bEsc(o.club.country)+' · '+bEsc(o.club.league)+'</small></div>'+visualKits(o.club.name,30)+'</div><div class="bClubRating"><span>OVR <b>'+clubOvr(o.club)+'</b></span><span class="bStars">'+starText(clubOvr(o.club))+'</span></div></div><dl class="bOfferFields">'+[['Papel no elenco',o.role],['Salário semanal','€ '+o.salary+' mil'],['Contrato',o.years+' ano(s)'],['Jogos projetados','~'+o.games],['Minutos projetados',o.minutes.toLocaleString('pt-BR')]].map(([l,v])=>'<div><dt>'+bEsc(l)+'</dt><dd>'+bEsc(v)+'</dd></div>').join('')+'</dl><details class="bOfferDetails"><summary>Ver detalhes do projeto</summary><p><b>Técnico:</b> '+bEsc(people.coach.name)+' · '+bEsc(people.coach.style)+'</p><p><b>Temporadas recentes:</b> '+bEsc(recentPositionLine(o.club))+'</p><p><b>Risco esportivo:</b> '+bEsc(offerRisk(o))+'</p><p>'+bEsc(o.why||'')+'</p>'+((o.promises||[]).length?'<p><b>Promessas:</b> '+o.promises.map(p=>bEsc(p.label+' '+p.target)).join(' · ')+'</p>':'')+(o.type==='loan'?'<p>Retorno ao clube de origem ao fim da temporada.</p>':'')+'</details><button type="button" class="btn '+(bUi.selected===i?'primary':'ghost')+'" data-b-select="'+i+'" aria-pressed="'+(bUi.selected===i)+'">'+(bUi.selected===i?'Proposta selecionada ✓':'Selecionar proposta')+'</button></article>'}
-function bMarket(batch,{initial=false,mid=false,preferLoan=false}={}){const selected=batch[bUi.selected],external=batch.map((o,i)=>({o,i})).filter(x=>x.o.type!=='stay'),stay=batch.find(o=>o.type==='stay'),current=P.club;const tableFields=[['Salário semanal',o=>'€ '+o.salary+' mil',current?'€ '+(P.salary||0)+' mil':'—'],['Duração do vínculo',o=>o.years+' anos',P.contract?Math.max(0,P.contract.endYear-P.year+1)+' ano(s) restantes':'—'],['Papel esportivo',o=>o.role,bRole()],['Jogos projetados',o=>'~'+o.games,current?'~'+projectedGames(P,current):'—'],['Minutos projetados',o=>o.minutes.toLocaleString('pt-BR'),current?expectedMinutes(P,current).toLocaleString('pt-BR'):'—'],['OVR do clube',o=>clubOvr(o.club),current?clubOvr(current):'—']];
- const currentCard=current?'<article class="bOffer current"><span class="bOfferBadge">Seu clube atual</span><div class="bClubTitle">'+visualAsset('crest',current.name,58)+'<div><h3>'+bEsc(current.name)+'</h3><small>'+bEsc(current.country)+' · '+bEsc(current.league)+'</small></div>'+visualKits(current.name,30)+'</div><div class="bClubRating"><span>OVR <b>'+clubOvr(current)+'</b></span><span class="bStars">'+starText(clubOvr(current))+'</span></div><dl class="bOfferFields">'+tableFields.slice(0,5).map(([l,fn,v])=>'<div><dt>'+bEsc(l)+'</dt><dd>'+bEsc(v)+'</dd></div>').join('')+'</dl><p class="bMuted">Referência para comparar os próximos projetos.</p>'+bButton('Ver contrato','tab:career:contracts')+'</article>':'';
+function bMarket(batch,{initial=false,mid=false,preferLoan=false}={}){const selected=batch[bUi.selected],external=batch.map((o,i)=>({o,i})).filter(x=>x.o.type!=='stay'),stay=batch.find(o=>o.type==='stay'),current=P.club;const tableFields=[['Salário semanal',o=>'€ '+o.salary+' mil',current?'€ '+(P.salary||0)+' mil':'—'],['Duração do vínculo',o=>o.type==='loan'?'Até o fim da temporada':o.years+' anos',P.contract?Math.max(0,P.contract.endYear-P.year+1)+' ano(s) restantes':'—'],['Papel esportivo',o=>o.role,bRole()],[mid&&preferLoan?'Jogos · 2ª metade':'Jogos projetados',o=>'~'+o.games,current?'~'+Math.round(projectedGames(P,current)*(mid&&preferLoan?.5:1)):'—'],[mid&&preferLoan?'Minutos · 2ª metade':'Minutos projetados',o=>o.minutes.toLocaleString('pt-BR'),current?Math.round(expectedMinutes(P,current)*(mid&&preferLoan?.5:1)).toLocaleString('pt-BR'):'—'],['OVR do clube',o=>clubOvr(o.club),current?clubOvr(current):'—']];
+ const currentCard=current?'<article class="bOffer current"><span class="bOfferBadge">'+(!mid&&!c26ValidContract()?'Último clube · sem vínculo':'Seu clube atual')+'</span><div class="bClubTitle">'+visualAsset('crest',current.name,58)+'<div><h3>'+bEsc(current.name)+'</h3><small>'+bEsc(current.country)+' · '+bEsc(current.league)+'</small></div>'+visualKits(current.name,30)+'</div><div class="bClubRating"><span>OVR <b>'+clubOvr(current)+'</b></span><span class="bStars">'+starText(clubOvr(current))+'</span></div><dl class="bOfferFields">'+tableFields.slice(0,5).map(([l,fn,v])=>'<div><dt>'+bEsc(l)+'</dt><dd>'+bEsc(v)+'</dd></div>').join('')+'</dl><p class="bMuted">Referência para comparar os próximos projetos.</p>'+bButton('Ver contrato','tab:career:contracts')+'</article>':'';
  const recommendation=selected?'Compare o papel de '+selected.role.toLowerCase()+' e os '+selected.minutes.toLocaleString('pt-BR')+' minutos projetados com a cobrança e o vínculo oferecidos.':P.age<23?'Espaço em campo e desenvolvimento merecem prioridade nesta fase.':P.physical<55?'Seu físico pede atenção à carga e ao papel prometido.':'Compare espaço, estabilidade e ambição do projeto antes de aceitar.';
- bMount({kind:'market',stage:mid?'Janela de meio de temporada':'Mercado de transferências',title:initial?'Onde sua história começa?':mid?'Mudar agora ou terminar o ano?':'Qual será seu próximo capítulo?',text:'Compare os projetos. Seu agente orienta; você decide.',scene:'stadium'},bHero({label:mid?'Meio de temporada':'Mercado de transferências',title:initial?'Escolha onde começar':'Mercado de transferências',text:preferLoan?'Projetos de empréstimo, com retorno ao clube de origem no encerramento.':'Novos desafios. Analise as propostas e escolha seu próximo projeto.',compact:true})+'<div class="bMarketToolbar"><p>Projeções anuais de jogos e minutos; não são garantias de utilização.</p><button class="btn ghost" id="bRefreshOffers">↻ Atualizar propostas</button></div><div class="bOffers" style="--offers-count:'+(external.length+(current?1:0))+'">'+currentCard+external.map(({o,i})=>bOfferCard(o,i,mid)).join('')+'</div><div class="bMarketBottom"><section class="bPanel"><h2>Comparativo dos projetos</h2><div class="bComparison"><table><thead><tr><th>Critério</th>'+(current?'<th>Atual<br>'+bEsc(current.name)+'</th>':'')+external.map(({o})=>'<th>'+bEsc(o.club.name)+'</th>').join('')+'</tr></thead><tbody>'+tableFields.map(([l,fn,v])=>'<tr><th>'+bEsc(l)+'</th>'+(current?'<td>'+bEsc(v)+'</td>':'')+external.map(({o})=>'<td>'+bEsc(fn(o))+'</td>').join('')+'</tr>').join('')+'</tbody></table></div></section><section class="bPanel"><h2>Conselho do seu agente</h2><p class="bAgent">'+bEsc(P.agentPerson?.name||'Seu agente')+'</p><p>'+bEsc(recommendation)+'</p>'+(selected?'<p><b>'+bEsc(selected.club.name)+'</b> · risco esportivo '+bEsc(offerRisk(selected))+'</p>':'<p class="bMuted">Selecione uma proposta para analisar o contexto.</p>')+'</section></div><div class="bMarketActions"><button type="button" class="btn primary" id="bAcceptSelected" '+(!selected?'disabled':'')+'>'+(selected?(selected.type==='loan'?'Aceitar empréstimo':'Aceitar proposta'):'Selecione uma proposta')+' →</button>'+(stay?'<button class="btn ghost" id="bStay">'+(mid?'Ficar e terminar a temporada':'Aceitar renovação')+'</button>':'')+(!initial&&!mid&&retirementPressure(P)>=30?'<button class="btn ghost" id="bMarketFuture">Pensar no futuro</button>':'')+'</div>'+(stay&&!mid?'<p class="bMuted">Renovação: '+bEsc(stay.years)+' anos · '+bEsc(stay.role)+' · € '+bEsc(stay.salary)+' mil/semana. Ganha estabilidade e reduz a flexibilidade futura.</p>':'')+(P.contractExitNote?'<section class="bPanel"><p>'+bEsc(P.contractExitNote)+'</p></section>':''),()=>{const opts={initial,mid,preferLoan};$('mainScreen').querySelectorAll('[data-b-select]').forEach(b=>b.addEventListener('click',()=>{bUi.selected=Number(b.dataset.bSelect);bMarket(batch,opts)}));bOnce($('bAcceptSelected'),()=>{if(bUi.selected==null)return;const first=!P.club;mid?acceptMidseasonOffer(bUi.selected):acceptOffer(bUi.selected);if(first)bRoute('home')});bOnce($('bRefreshOffers'),()=>{bUi.selected=null;mid?showMidseasonMarket(preferLoan,true):showOffers(initial,true)});if($('bStay'))bOnce($('bStay'),()=>mid?acceptMidseasonOffer(batch.indexOf(stay)):acceptOffer(batch.indexOf(stay)));if($('bMarketFuture'))bOnce($('bMarketFuture'),showCareerDecision);});
+ bMount({kind:'market',stage:mid?'Janela de meio de temporada':'Mercado de transferências',title:initial?'Onde sua história começa?':mid?'Mudar agora ou terminar o ano?':'Qual será seu próximo capítulo?',text:'Compare os projetos. Seu agente orienta; você decide.',scene:'stadium'},bHero({label:mid?'Meio de temporada':'Mercado de transferências',title:initial?'Escolha onde começar':'Mercado de transferências',text:preferLoan?'Projetos de empréstimo, com retorno ao clube de origem no encerramento.':'Novos desafios. Analise as propostas e escolha seu próximo projeto.',compact:true})+'<div class="bMarketToolbar"><p>'+(mid&&preferLoan?'Projeções para a segunda metade. Empréstimo até o fim da temporada; retorno ao clube de origem e salário preservado.':'Projeções anuais de jogos e minutos; não são garantias de utilização.')+'</p><button class="btn ghost" id="bRefreshOffers">↻ Atualizar propostas</button></div><div class="bOffers" style="--offers-count:'+(external.length+(current?1:0))+'">'+currentCard+external.map(({o,i})=>bOfferCard(o,i,mid)).join('')+'</div><div class="bMarketBottom"><section class="bPanel"><h2>Comparativo dos projetos</h2><div class="bComparison"><table><thead><tr><th>Critério</th>'+(current?'<th>Atual<br>'+bEsc(current.name)+'</th>':'')+external.map(({o})=>'<th>'+bEsc(o.club.name)+'</th>').join('')+'</tr></thead><tbody>'+tableFields.map(([l,fn,v])=>'<tr><th>'+bEsc(l)+'</th>'+(current?'<td>'+bEsc(v)+'</td>':'')+external.map(({o})=>'<td>'+bEsc(fn(o))+'</td>').join('')+'</tr>').join('')+'</tbody></table></div></section><section class="bPanel"><h2>Conselho do seu agente</h2><p class="bAgent">'+bEsc(P.agentPerson?.name||'Seu agente')+'</p><p>'+bEsc(recommendation)+'</p>'+(selected?'<p><b>'+bEsc(selected.club.name)+'</b> · risco esportivo '+bEsc(offerRisk(selected))+'</p>':'<p class="bMuted">Selecione uma proposta para analisar o contexto.</p>')+'</section></div><div class="bMarketActions"><button type="button" class="btn primary" id="bAcceptSelected" '+(!selected?'disabled':'')+'>'+(selected?(selected.type==='loan'?'Aceitar empréstimo':'Aceitar proposta'):'Selecione uma proposta')+' →</button>'+(stay?'<button class="btn ghost" id="bStay">'+(mid?'Ficar e terminar a temporada':'Aceitar renovação')+'</button>':'')+(!initial&&!mid&&retirementPressure(P)>=30?'<button class="btn ghost" id="bMarketFuture">Pensar no futuro</button>':'')+'</div>'+(stay&&!mid?'<p class="bMuted">Renovação: '+bEsc(stay.years)+' anos · '+bEsc(stay.role)+' · € '+bEsc(stay.salary)+' mil/semana. Ganha estabilidade e reduz a flexibilidade futura.</p>':'')+(P.contractExitNote?'<section class="bPanel"><p>'+bEsc(P.contractExitNote)+'</p></section>':''),()=>{const opts={initial,mid,preferLoan};$('mainScreen').querySelectorAll('[data-b-select]').forEach(b=>b.addEventListener('click',()=>{bUi.selected=Number(b.dataset.bSelect);bMarket(batch,opts)}));bOnce($('bAcceptSelected'),()=>{if(bUi.selected==null)return;const first=!P.club;mid?acceptMidseasonOffer(bUi.selected):acceptOffer(bUi.selected);if(first)bRoute('home')});bOnce($('bRefreshOffers'),()=>{bUi.selected=null;mid?showMidseasonMarket(preferLoan,true):showOffers(initial,true)});if($('bStay'))bOnce($('bStay'),()=>mid?acceptMidseasonOffer(batch.indexOf(stay)):acceptOffer(batch.indexOf(stay)));if($('bMarketFuture'))bOnce($('bMarketFuture'),showCareerDecision);});
 }
 showOffers=function(initial=false,refresh=false){offers=buildMarketOffers(P,initial,refresh);bUi.selected=null;bMarket(offers,{initial})};
 showMidseasonMarket=function(preferLoan=false,refresh=false){P.midOffers=buildMidseasonOffers(preferLoan,refresh);bUi.selected=null;bMarket(P.midOffers,{mid:true,preferLoan})};
@@ -4615,7 +4616,7 @@ new MutationObserver(()=>bSync()).observe($('game'),{attributes:true,attributeFi
 const bEngineRetire=retire;retire=function(){const result=bEngineRetire();if(!diagnosticMode091){bUi.pending={kind:"retired",stage:"Carreira encerrada",title:"Sua história deixou um legado",text:P.name+" · "+P.games+" jogos · "+P.goals+" gols · "+P.trophies+" títulos",scene:"stadium"};bRoute("flow")}return result};
 
 /* v0.9.3 — portability and recovery tools. The save schema remains version 73. */
-const C10_RELEASE='0.9.25';
+const C10_RELEASE='0.9.26';
 const C10_EXPORT_KIND='carreira10-save';
 
 function c10Download(name,text,type='application/json'){
@@ -5955,11 +5956,240 @@ c10CareerAutoPick=function(e,strategy){
  return c25AutoBase(e,strategy);
 };
 
+/* v0.9.26 — Fronteiras de carreira: vínculo, seleção, empréstimo e leitura contínua. */
+function c26ValidContract(p=P){
+ const c=p?.contract;return !!(p?.club&&c&&c.club===p.club.name&&Number.isFinite(c.endYear)&&c.endYear>=p.year&&['ativo','active',''].includes(String(c.status||'').toLowerCase()));
+}
+function c26Renewal(p=P){
+ if(!p?.club||c26ValidContract(p))return null;
+ p.c26Renewals??={};const key=`${p.year}:${p.club.name}:${p.contract?.id||'legacy'}`;
+ if(!p.c26Renewals[key]){
+  const board=p===P?clubRelationship(p.club.name).boardTrust:50;
+  const unavailable=p.lastSeason?.physical?.days||0,used=p.lastSeason?.minutes??1200;
+  const refuses=board<38||(used<650&&unavailable<45&&board<55);
+  p.c26Renewals[key]={year:p.year,club:p.club.name,status:refuses?'refused':'offered',reason:board<38?'A confiança da diretoria está baixa.':refuses?'A utilização recente ficou baixa e a diretoria não aprovou a continuidade.':'O clube apresentou uma proposta para um novo vínculo.',offer:refuses?null:makeOffer(p,p.club,'stay')};
+ }
+ return p.c26Renewals[key];
+}
+const c26BuildMarketBase=buildMarketOffers;
+buildMarketOffers=function(p,initial=false,refresh=false){
+ const batch=c26BuildMarketBase(p,initial,refresh);if(initial||!p.club)return batch;
+ const d=c26Renewal(p);if(!d)return batch;
+ if(p===P)p.contractExitNote=`O vínculo com ${d.club} terminou. ${d.status==='refused'?'O clube não quer renovar.':'A permanência exige aceitar a renovação.'} ${d.reason}`;
+ const external=batch.filter(o=>o.type!=='stay');return d.offer?[...external,{...d.offer,club:clubByName(d.club)||d.offer.club}]:external;
+};
+function c26ReturnLoan(s=P?.lastSeason){
+ if(!s?.loan||P.activeSeason||s.c26LoanReturned||s.year>=P.year)return false;
+ const loan=P.c26Loan,origin=clubByName(loan?.origin||s.startClub);
+ if(!origin||(!loan&&P.club?.name!==s.club))return false;
+ P.club=origin;if(loan){P.coach=loan.coach;P.clubRel=loan.clubRel;P.seasonsAtClub=loan.seasonsAtClub??P.seasonsAtClub;loan.status='returned';loan.returnYear=P.year;}
+ const minutes=expectedMinutes(P,origin);P.contractPromise={club:origin.name,role:roleFor(P,origin).name,minutes,games:projectedGames(P,origin,minutes),type:'return'};
+ s.c26LoanReturned=true;
+ addDetailedMemory(`loan_return_${s.year}_${origin.name}`,'Fim do empréstimo',`Retornou de ${s.club} ao ${origin.name}. O vínculo de origem ${c26ValidContract()?'continua válido.':'terminou; a continuidade exige uma nova proposta.'}`,origin.name);
+ return true;
+}
+function c26ContractNotice(){
+ if(!P.club||c26ValidContract())return '';
+ const d=c26Renewal();return `<section class="bPanel c26ContractNotice"><h2>${d.status==='refused'?'O clube não vai renovar':'Seu contrato terminou'}</h2><p>${bEsc(d.club)} · ${bEsc(d.reason)} ${d.offer?'Aceite a renovação ou escolha outro clube para iniciar a próxima temporada.':'Escolha outro projeto para continuar a carreira.'}</p>${d.offer?`<p>Proposta: ${d.offer.years} ano(s) · ${bEsc(d.offer.role)} · € ${d.offer.salary} mil por semana.</p>`:''}</section>`;
+}
+const c26MarketRenderBase=bMarket;
+bMarket=function(batch,options={}){const result=c26MarketRenderBase(batch,options);if(!diagnosticMode091&&!options.initial&&!options.mid&&!c26ValidContract())$('mainScreen').insertAdjacentHTML('afterbegin',c26ContractNotice());return result};
+const c26BeginBase=beginSeason;
+beginSeason=function(){
+ c26ReturnLoan();if(!c26ValidContract()){if(!diagnosticMode091)showOffers(!P.club);return false;}
+ return c26BeginBase();
+};
+const c26ContinueBase=continueWithoutMarket;
+continueWithoutMarket=function(){c26ReturnLoan();if(!c26ValidContract())return showOffers(false);return c26ContinueBase()};
+const c26SimulateBase=simulateSeason;
+simulateSeason=function(){if(!P.activeSeason&&!c26ValidContract()){if(!diagnosticMode091)showOffers(false);return false}return c26SimulateBase()};
+const c26QuickBase=quickSimOneSeason;
+quickSimOneSeason=function(){
+ c26ReturnLoan();if(!c26ValidContract()){
+  const batch=buildMarketOffers(P),choice=batch.find(o=>o.type==='stay')||batch.slice().sort((a,b)=>labUtility(P,b,'balanced')-labUtility(P,a,'balanced'))[0];
+  if(!choice)throw Error('Não há proposta válida para continuar a carreira.');
+  offers=batch;const mode=diagnosticMode091;diagnosticMode091=true;try{acceptOffer(batch.indexOf(choice))}finally{diagnosticMode091=mode}
+ }
+ return c26QuickBase();
+};
+const c26SummaryBase=showSeasonSummary;
+showSeasonSummary=function(s){
+ c26ReturnLoan(s);const result=c26SummaryBase(s);if(diagnosticMode091)return result;
+ if(s?.loan&&s.c26LoanReturned)$('mainScreen').insertAdjacentHTML('afterbegin',`<section class="bPanel c26ContractNotice"><h2>Empréstimo encerrado · retorno confirmado</h2><p>${bEsc(s.startClub)}: ${s.firstHalf?.minutes||0} min na primeira metade. ${bEsc(s.club)}: ${s.secondHalf?.minutes||0} min na segunda metade.</p><p>Você já retornou ao ${bEsc(P.club.name)}. ${c26ValidContract()?'O vínculo de origem continua válido.':'O vínculo de origem terminou; é necessária uma nova proposta.'}</p></section>`);
+ if(!c26ValidContract()){
+  $('mainScreen').insertAdjacentHTML('afterbegin',c26ContractNotice());
+  const stay=$('stayNextBtn');if(stay){stay.textContent='Definir novo contrato →';stay.title='O contrato anterior terminou. É necessário aceitar uma proposta.';}
+ }
+ return result;
+};
+const c26ClosureBase=c22SeasonClosure;
+c22SeasonClosure=function(s){const html=c26ClosureBase(s);return s?.loan?html.replace(`No ${bEsc(s.club)}, você somou`,`Na temporada entre ${bEsc(s.startClub)} e ${bEsc(s.club)}, você somou`):html};
+const c26PostMarketBase=postSeasonMarket;
+postSeasonMarket=function(s){c26ReturnLoan(s);return showOffers(false)};
+
+/* A seleção encerrada não cria novas recusas ou promessas de convocação. */
+const c26NationalCycleBase=simulateNationalCycle;
+simulateNationalCycle=function(s){
+ if(!ensureRetirementState().nationalRetired)return c26NationalCycleBase(s);
+ const n=ensureNationalCareer();n.status='Aposentado';n.captain=false;P.nationalRole='Aposentado';
+ return {year:s.year,age:s.age,called:false,retired:true,context:'Carreira internacional encerrada',role:'Aposentado',caps:0,goals:0};
+};
+const c26NationalMomentBase=showNationalTeamMoment;
+showNationalTeamMoment=function(s){c26ReturnLoan(s);if(ensureRetirementState().nationalRetired)return diagnosticMode091?undefined:showSeasonSummary(s);return c26NationalMomentBase(s)};
+const c26NationalContextBase=nationalSeasonContext;
+nationalSeasonContext=function(year){return P&&ensureRetirementState().nationalRetired?{kind:'Legado internacional',name:'Ciclo internacional encerrado',text:`Aposentado de ${P.nation} desde ${P.retirement.nationalRetirementYear}. A carreira de clubes continua.`}:c26NationalContextBase(year)};
+const c26NationalCardBase=c10NationalHomeCard;
+c10NationalHomeCard=function(){return ensureRetirementState().nationalRetired?`<section class="bPanel c10NationalHome"><div><small>SELEÇÃO · APOSENTADO</small><h2>Seu legado por ${bEsc(P.nation)}</h2><p>${P.caps} jogos · ${P.ntGoals} gols. Ciclo encerrado em ${P.retirement.nationalRetirementYear}.</p></div>${bButton('Ver história da seleção →','tab:profile:national')}</section>`:c26NationalCardBase()};
+const c26InternationalBase=c10InternationalSummary;
+c10InternationalSummary=function(){return ensureRetirementState().nationalRetired?`<section class="c10InternationalHero"><div><small>LEGADO INTERNACIONAL</small><h2>${bEsc(P.nation)} · Aposentado</h2><p>Ciclo encerrado em ${P.retirement.nationalRetirementYear}. ${P.caps} jogos e ${P.ntGoals} gols. Sem novas convocações.</p></div></section>`:c26InternationalBase()};
+const c26FactorsBase=c10InternationalFactors;
+c10InternationalFactors=function(){return ensureRetirementState().nationalRetired?'<p>A despedida encerrou a disputa por convocações. Os registros anteriores continuam disponíveis como parte do seu legado.</p>':c26FactorsBase()};
+const c26NationalPageBase=macro094.national;
+macro094.national=function(){const html=c26NationalPageBase.call(this);return ensureRetirementState().nationalRetired?html.replace('O que pesa na convocação','Trajetória internacional encerrada'):html};
+const c26RareBase=c10RareEvents;
+c10RareEvents=function(phase){return c26RareBase(phase).filter(e=>!ensureRetirementState().nationalRetired||e.family!=='seleção')};
+const c26ExpandedBase=c10ExpandedChoice;
+c10ExpandedChoice=function(pool,phase,factory){return c26ExpandedBase(ensureRetirementState().nationalRetired?pool.filter(e=>e.family!=='seleção'):pool,phase,factory)};
+const c26OldestBase=c22OldestDue;
+c22OldestDue=function(){if(ensureRetirementState().nationalRetired)for(const a of P.pendingConsequences||[])if(a.family==='seleção'&&!a.resolved){a.resolved=true;a.resolvedYear=P.year;a.resolution='Encerrado pela aposentadoria internacional'}return c26OldestBase()};
+function c26FarewellEvent(){return {_c10Normalized:true,id:`c26_national_farewell_${P.retirement.nationalRetirementYear}`,c26Farewell:true,family:'seleção',t:'O último capítulo com a seleção',d:`Você encerrou a trajetória por ${P.nation} com ${P.caps} jogos e ${P.ntGoals} gols. Sua decisão foi registrada: os próximos ciclos não terão convocações nem cobranças por uma vaga. A carreira nos clubes continua.`,opts:[{label:'Guardar essa história e seguir com os clubes',effects:{},text:'Sua despedida internacional fica registrada na memória da carreira.'}]}}
+function c26ShowFarewell(){const e=c26FarewellEvent();bCapturedNational=e;bRenderEvent(e,'Seleção · Despedida',i=>c10ResolveNationalChoice(P.lastSeason,e,i))}
+const c26RenderEventBase=bRenderEvent;
+bRenderEvent=function(e,kind,choose,extra=''){
+ if(!e?.c26Farewell)return c26RenderEventBase(e,kind,choose,extra);
+ c10KeepFlow({kind:'event',phase:'national',event:e,stage:kind,extra:''});
+ bMount({kind:'event',stage:kind,title:e.t,text:e.d,scene:'stadium'},`<div class="a3Scene"><div>${a3Hero({title:e.t,text:e.d,stage:kind,event:e})}</div><section class="bPanel c26Farewell"><span class="a3Kicker">DESPEDIDA REGISTRADA</span><h2>Essa camisa fica na sua história</h2>${bMetrics([['Jogos pela seleção',P.caps],['Gols pela seleção',P.ntGoals],['Ano da despedida',P.retirement.nationalRetirementYear]])}<p>Você continua a carreira de clubes. Sua trajetória internacional fica disponível no Perfil, como legado.</p><button class="btn primary" id="c26FarewellContinue">Continuar a carreira de clubes →</button></section></div>`,()=>bOnce($('c26FarewellContinue'),()=>c10ResolveNationalChoice(P.lastSeason,e,0)));
+};
+retireFromNationalTeam=function(){
+ const r=ensureRetirementState();if(r.nationalRetired){if(!r.c26FarewellSeen)return c26ShowFarewell();return showCareerDecision()}
+ r.nationalRetired=true;r.nationalRetirementYear=P.year;r.decisionHistory.push({year:P.year,type:'selection',label:'Aposentadoria da seleção'});
+ const n=ensureNationalCareer();n.status='Aposentado';n.captain=false;P.nationalRole='Aposentado';
+ addDetailedMemory(`national_retirement_${P.year}`,'Despedida da seleção',`Encerrou a trajetória por ${P.nation} com ${P.caps} jogos e ${P.ntGoals} gols.`,'Seleção');
+ c26ShowFarewell();
+};
+const c26ResolveNationalBase=c10ResolveNationalChoice;
+c10ResolveNationalChoice=function(s,e,i){
+ if(!e?.c26Farewell)return ensureRetirementState().nationalRetired?showSeasonSummary(s||P.lastSeason):c26ResolveNationalBase(s,e,i);
+ const r=ensureRetirementState();if(!e.opts[i])return;
+ if(!r.c26FarewellSeen){r.c26FarewellSeen=true;P.storyLog.push({year:P.year,age:P.age,club:P.nation,eventId:e.id,title:e.t,choice:e.opts[i].label,text:e.d,follow:false});ensureNationalCareer().moments.push({year:P.year,title:e.t,text:e.d});}
+ renderPlayer();if(P.lastSeason)showSeasonSummary(P.lastSeason);else{c10KeepFlow({kind:'event',phase:'national',event:e,stage:'Seleção · Despedida'});showCareerDecision()}
+};
+const c26ContinueFlowBase=c10ContinueFlow;
+c10ContinueFlow=function(flow){return flow.event?.c26Farewell?(P.lastSeason?showSeasonSummary(P.lastSeason):showCareerDecision()):c26ContinueFlowBase(flow)};
+const c26RestoreBase=c10RestoreFlow;
+c10RestoreFlow=function(){
+ const flow=P?.savedFlow;
+ if(flow?.kind==='event'&&flow.event?.c26Farewell){c10RestoringFlow=true;try{c26ShowFarewell();return true}finally{c10RestoringFlow=false}}
+ if(P&&ensureRetirementState().nationalRetired&&flow?.phase==='national'&&!flow.event?.c26Farewell&&P.lastSeason){showSeasonSummary(P.lastSeason);return true}
+ return c26RestoreBase();
+};
+
+/* Empréstimo é uma alternativa visível na decisão de meio de temporada. */
+const c26MidBase=midseasonEvent;
+midseasonEvent=function(){
+ const e=c26MidBase();if(!e||!P.activeSeason||P.activeSeason.loan||!c26ValidContract())return e;
+ if(!e.opts.some(o=>o.c26LoanExplore))e.opts.push({label:'Procurar um empréstimo para jogar mais',intent:'search',spaceIntent:'loan',c26LoanExplore:true,action:'market',loanPreferred:true,effects:{agent:2,clubRel:-2},text:'Abra as opções de empréstimo para a segunda metade. Você pode comparar e ficar no clube; a busca não garante uma proposta melhor.'});
+ return e;
+};
+const c26SpaceReturnBase=c10SpaceReturn;
+c10SpaceReturn=function(){const e=c26SpaceReturnBase();if(e&&c10SpaceActive()?.intent==='loan'){e.d=e.d.replace('undefined','procurar um empréstimo para ganhar utilização');e.desc=e.d}return e};
+const c26MidOffersBase=buildMidseasonOffers;
+buildMidseasonOffers=function(preferLoan=false,refresh=false){
+ if(!preferLoan)return c26MidOffersBase(false,refresh);
+ const batch=c26MidOffersBase(true,refresh),current=expectedMinutes(P,P.club),eligible=c26ValidContract()&&!P.activeSeason?.loan;
+ const found=batch.filter(o=>o.type==='loan'&&eligible&&o.minutes>=current+180),stay=batch.find(o=>o.type==='stay');
+ if(eligible&&found.length<3){const avoid=new Set([P.club.name,...found.map(o=>o.club.name)]);for(const club of shuffle(activeClubs().filter(c=>!avoid.has(c.name))).slice(0,24)){const o=makeOffer(P,club,'protagonist');if(o.minutes>=current+180){o.type='loan';found.push(o);avoid.add(club.name)}if(found.length===3)break}}
+ return [...found,...(stay?[stay]:[])].map(o=>o.type!=='loan'?o:{...o,annualMinutes:o.minutes,annualGames:o.games,minutes:Math.round(o.minutes/2),games:Math.round(o.games/2),years:1,salary:P.salary,why:'Empréstimo apenas até o encerramento desta temporada. Projeções abaixo para a segunda metade; o vínculo e o salário do clube de origem são preservados.'});
+};
+const c26AcceptMidBase=acceptMidseasonOffer;
+acceptMidseasonOffer=function(i){
+ const o=P.midOffers?.[i];if(!o)return;
+ if(o.type==='loan'){
+  if(!c26ValidContract()||P.activeSeason?.loan)return;
+  P.c26Loan={origin:P.club.name,destination:o.club.name,year:P.year,contractId:P.contract.id,coach:P.coach,clubRel:P.clubRel,seasonsAtClub:P.seasonsAtClub,status:'active'};P.seasonsAtClub=0;
+ }
+ const result=c26AcceptMidBase(i);
+ if(o.type==='loan')P.contractPromise={club:o.club.name,role:o.role,minutes:o.annualMinutes||o.minutes*2,games:o.annualGames||o.games*2,type:'loan'};
+ return result;
+};
+const c26OfferCardBase=bOfferCard;
+bOfferCard=function(o,i,mid){let html=c26OfferCardBase(o,i,mid);if(o.type==='loan')html=html.replace(bEsc(o.years+' ano(s)'),'Até o fim da temporada').replace('Jogos projetados','Jogos · 2ª metade').replace('Minutos projetados','Minutos · 2ª metade');return html};
+const c26DeskBase=c10DecisionDesk;
+c10DecisionDesk=function(o){
+ if(o?.type!=='loan')return c26DeskBase(o);
+ const current=Math.round(expectedMinutes(P,P.club)/2),gain=o.minutes-current;
+ return `<section class="bPanel c10DecisionDesk"><small>EMPRÉSTIMO · SEGUNDA METADE</small><h2>${bEsc(o.club.name)}</h2><p>Até o fim da temporada · salário preservado: € ${P.salary} mil por semana.</p>${bMetrics([['Minutos no clube atual',current],['Minutos no destino',o.minutes],['Diferença projetada',(gain>=0?'+':'')+gain]])}<p>${bEsc(o.role)} · cerca de ${o.games} jogos na segunda metade. Projeções não garantem escalação.</p><p>O contrato com ${bEsc(P.club.name)} não ganha anos adicionais. Ao fim do empréstimo, você retorna ao clube de origem; se o vínculo tiver vencido, será necessária uma nova proposta.</p></section>`;
+};
+
+/* Indicadores presentes em qualquer área, sem reduzir o conteúdo a páginas. */
+const c26Hud=document.createElement('aside');c26Hud.className='c26Hud';c26Hud.setAttribute('aria-label','Atributos atuais do jogador');document.body.append(c26Hud);
+function c26RenderHud(){
+ if(!P||!document.body.classList.contains('bGame')){c26Hud.classList.add('hidden');return}
+ c26Hud.classList.remove('hidden');const rel=P.club?clubRelationship(P.club.name):null;
+ const metric=([label,value])=>`<div class="c26Attribute"><span>${label}</span><b>${Number.isFinite(value)?Math.round(value):bEsc(value??'—')}</b></div>`;
+ c26Hud.innerHTML=`<span class="c26HudLabel">AGORA</span>${[['OVR',P.ovr],['Forma',P.form],['Moral',P.morale],['Físico',P.physical],['Reputação',P.rep],['Técnico',P.coach],['Vestiário',P.squad],['Clube',P.clubRel]].map(metric).join('')}<details class="c26More"><summary>Mais atributos</summary><div>${[['Agente',P.agent],['Exposição',P.media],['Resiliência',P.pressureTolerance],['Torcida',rel?.fanBond],['Diretoria',rel?.boardTrust],['Durabilidade',P.longevity>=1.08?'Alta':P.longevity<=.92?'Baixa':'Normal']].map(metric).join('')}</div></details>`;
+}
+const c26SyncBase=bSync;bSync=function(){c26SyncBase();if(!diagnosticMode091)c26RenderHud()};
+
+/* Mesmo motor do jogo em workers isolados, com interface mínima completa. */
+function c26WorkerSource(visual,engine){
+ const adapter=`const window=self;
+ class C26Node{constructor(){this.value='';this.innerHTML='';this.textContent='';this.children=[];this.dataset={};this.style={setProperty(){}};this.classList={add(){},remove(){},toggle(){},contains(){return false}};this.parentElement=this;}addEventListener(){}removeEventListener(){}setAttribute(){}append(...n){this.children.push(...n)}prepend(){}before(){}remove(){}insertBefore(){}insertAdjacentElement(){}insertAdjacentHTML(){}querySelector(){return new C26Node()}querySelectorAll(){return []}get firstElementChild(){return this.children[0]||null}}
+ const nodes=new Map(),document={body:new C26Node(),documentElement:new C26Node(),getElementById(id){if(!nodes.has(id))nodes.set(id,new C26Node());return nodes.get(id)},createElement(){return new C26Node()},querySelector(){return new C26Node()},querySelectorAll(){return []},addEventListener(){}};
+ const localStorage={getItem(){return null},setItem(){throw Error('Diagnóstico não pode gravar saves')},removeItem(){throw Error('Diagnóstico não pode apagar saves')}};
+ const alert=()=>{},confirm=()=>false,requestAnimationFrame=()=>0,MutationObserver=class{observe(){}disconnect(){}};
+ self.scrollTo=()=>{};self.__c26DiagnosticWorker=true;
+ `;
+ const at=engine.lastIndexOf('\n})();');if(at<0)throw Error('Não foi possível preparar o motor do diagnóstico.');
+ const handler=`\nself.onmessage=({data})=>{try{const result=runIsolatedCareer091(data.strategy,data.seed,data.base);self.postMessage({index:data.index,result});}catch(e){self.postMessage({index:data.index,error:e.message});}};\n`;
+ return adapter+visual+'\n'+engine.slice(0,at)+handler+engine.slice(at);
+}
+async function c26DiagnosticBatch(base,seed,total,progress){
+ if(typeof Worker==='undefined')throw Error('Este navegador não permite executar o laboratório em segundo plano. Abra o jogo em um navegador desktop atualizado.');
+ if(!base.some(c=>c.enabled!==false))throw Error('Ative pelo menos um clube antes de iniciar.');
+ const source=c26WorkerSource($('careerVisual091').textContent,$('careerEngine091').textContent);
+ const url=URL.createObjectURL(new Blob([source],{type:'text/javascript'})),workers=[],rows=new Array(total);let next=0,done=0;
+ try{return await new Promise((resolve,reject)=>{
+  cancelDiagnostic091=()=>reject(Error('Cancelado pelo jogador'));
+  const send=w=>{if(next>=total)return;const i=next++;w.postMessage({index:i,strategy:['minutes','prestige','balanced'][i%3],seed:seed+i,base})};
+  const count=Math.min(2,total,Math.max(1,(navigator.hardwareConcurrency||3)-1));
+  for(let i=0;i<count;i++){
+   const w=new Worker(url);workers.push(w);
+   w.onerror=e=>reject(Error(e.message||'Falha ao iniciar a simulação'));
+   w.onmessage=({data})=>{if(data.error)return reject(Error(data.error));rows[data.index]=data.result;progress(++done);if(done===total)resolve(rows);else send(w)};
+   send(w);
+  }
+ })}finally{workers.forEach(w=>w.terminate());URL.revokeObjectURL(url);cancelDiagnostic091=null}
+}
+function c26LabResults(results,seed,total){
+ const data=aggregate091(results),names={minutes:'Minutos',prestige:'Prestígio',balanced:'Equilíbrio'};
+ window.carreira10Diagnostic091={...data,version:C10_RELEASE,seed,results};
+ const average=(rows,key)=>(rows.reduce((s,r)=>s+r[key],0)/rows.length).toFixed(1);
+ $('labContent').innerHTML=`<h2>Diagnóstico concluído · ${total}/${total} carreiras</h2><p>Motor v${C10_RELEASE} · semente inicial ${seed}. Sua carreira e seus saves foram preservados.</p><table class="table"><thead><tr><th>Estratégia</th><th>Carreiras</th><th>Pico OVR</th><th>Jogos</th><th>Gols</th><th>Clubes</th><th>Idade final</th></tr></thead><tbody>${Object.keys(names).map(s=>{const rows=results.filter(r=>r.strategy===s);return `<tr><td>${names[s]}</td><td>${rows.length}</td>${['peak','games','goals','clubs','retireAge'].map(k=>`<td>${average(rows,k)}</td>`).join('')}</tr>`}).join('')}</tbody></table><p>As estratégias automáticas permitem comparar o comportamento do motor; não representam tempo de leitura ou avaliação da diversão.</p><details><summary>Ver alertas de calibração</summary><p>Faixas internas de design, não estatísticas do futebol real.</p>${data.alerts.map(a=>`<p>${bEsc(a.key)}: ${a.value.toFixed(2)} · referência ${a.range.join('–')}</p>`).join('')||'<p>Nenhuma média fora das faixas internas.</p>'}</details><div class="actions"><button class="btn" id="c26ExportLab">Exportar diagnóstico</button><button class="btn ghost" id="c26AgainLab">Novo diagnóstico</button></div>`;
+ $('c26ExportLab').onclick=()=>{const url=URL.createObjectURL(new Blob([JSON.stringify(window.carreira10Diagnostic091,null,2)],{type:'application/json'}));const a=document.createElement('a');a.href=url;a.download='carreira10-diagnostico-v0926.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000)};
+ $('c26AgainLab').onclick=runLab;
+}
+async function c26StartLab(total){
+ if(labRunning091)return;labRunning091=true;let completed=0;const seed=926100;
+ $('backBtn').disabled=true;
+ const progress=n=>{completed=n;$('labContent').innerHTML=`<section class="c26LabProgress"><h2>Simulando carreiras · ${n}/${total}</h2><progress max="${total}" value="${n}" aria-label="Carreiras concluídas"></progress><p>Estratégias de minutos, prestígio e equilíbrio. O tempo depende das ligas ativas. Sua carreira permanece separada.</p><button class="btn ghost" id="c26CancelLab">Cancelar diagnóstico</button></section>`;$('c26CancelLab').onclick=()=>cancelDiagnostic091?.()};
+ try{progress(0);const rows=await c26DiagnosticBatch(structuredClone(clubs),seed,total,progress);c26LabResults(rows,seed,total)}
+ catch(e){$('labContent').innerHTML=`<section class="bPanel"><h2>${String(e.message).startsWith('Cancelado')?'Diagnóstico cancelado':'Não foi possível concluir o diagnóstico'}</h2><p>${completed}/${total} carreiras concluídas. ${bEsc(e.message)}. Sua carreira foi preservada.</p><button class="btn" id="c26AgainLab">Tentar novamente</button></section>`;$('c26AgainLab').onclick=runLab;}
+ finally{labRunning091=false;$('backBtn').disabled=false}
+}
+runLab=function(){
+ if(labRunning091)return;
+ $('setup').classList.add('hidden');$('lab').classList.remove('hidden');$('backBtn').disabled=false;
+ $('labContent').innerHTML=`<h2>Escolha o tamanho do diagnóstico</h2><p>As carreiras rodam com o motor atual, em segundo plano, sem alterar seu jogador. Comece com 30 para uma verificação rápida; 1.000 é uma análise mais demorada.</p><div class="c26LabControls"><label>Quantidade de carreiras<select id="c26LabCount"><option value="30">30 · verificação rápida</option><option value="100">100 · comparação</option><option value="1000">1.000 · diagnóstico completo</option></select></label><button class="btn primary" id="c26StartLab">Iniciar diagnóstico</button></div>`;
+ $('c26StartLab').onclick=()=>c26StartLab(Number($('c26LabCount').value)||30);
+};
+if(typeof self==='undefined'||!self.__c26DiagnosticWorker){$('labBtn').textContent='Laboratório';const title=$('lab').querySelector('h1');if(title)title.textContent='Laboratório de carreiras';}
+
 
 })();
 //# sourceURL=carreira10-engine.js
 </script>
-<div class="c10BuildStamp" hidden>Carreira 10 v0.9.25 · Histórias em disputa · base 2023.1 · equilíbrio global 2 · save schema 73</div>
+<div class="c10BuildStamp" hidden>Carreira 10 v0.9.26 · Continuidade da carreira · base 2023.1 · equilíbrio global 2 · save schema 73</div>
 </body>
 </html>
 
